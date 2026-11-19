@@ -1,0 +1,2325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bolchaal — Grammar Quiz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>                                                                                                                                                                     
+        :root {
+            --bg-color: #F8FAF5;
+            --surface: rgba(255, 255, 255, 0.85);
+            --primary-text: #1A1D26;
+            --secondary-text: #6B7280;
+            --accent-start: #20497d;
+            --accent-end: #20497d;
+            --success: #10B981;
+            --radius-lg: 28px;
+            --radius-md: 20px;
+            --radius-sm: 12px;
+            --shadow-glass: 0 8px 32px 0 rgba(32, 73, 125, 0.07);
+            --shadow-float: 0 12px 28px -8px rgba(0, 0, 0, 0.32);
+            --font-main: 'Comfortaa', cursive;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: var(--font-main);
+            background-color: #F1F4EC;
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Center vertically on desktop */
+            min-height: 100vh;
+            color: var(--primary-text);
+            overflow-x: hidden;
+        }
+
+        /* Mobile Container - STRICT WIDTH CONTROL */
+        #app {
+            width: 100%;
+            max-width: 480px;
+            height: 100vh; /* Fixed height for mobile feel */
+            background: linear-gradient(180deg, #fffef8 0%, #f5f7ed 100%);
+            position: relative;
+            overflow-y: auto; /* Scroll inside the phone */
+            overflow-x: hidden;
+            box-shadow: 0 0 60px rgba(0,0,0,0.15);
+        }
+
+        /* Animated Background Blobs - CONTAINED */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            z-index: 0;
+            opacity: 0.6;
+            animation: float 10s infinite ease-in-out;
+            pointer-events: none;
+        }
+        .blob-1 { top: -50px; left: -50px; width: 300px; height: 300px; background: #b9d433; animation-delay: 0s; }
+        .blob-2 { bottom: 100px; right: -80px; width: 250px; height: 250px; background: #b9d433; animation-delay: 2s; opacity: 0.45; }
+        .blob-3 { top: 40%; left: 20%; width: 200px; height: 200px; background: #b9d433; animation-delay: 4s; opacity: 0.25; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(20px, -20px) scale(1.1); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        .page {
+            display: none;
+            padding: 28px;
+            padding-bottom: 120px; /* Extra space for nav */
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            min-height: 100%;
+        }
+        .page.active { display: block; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 { font-size: 36px; font-weight: 700; letter-spacing: -1px; margin-bottom: 12px; line-height: 1.2; background: linear-gradient(135deg, var(--primary-text) 0%, #4B5563 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h2 { font-size: 24px; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.3px; }
+        h3 { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
+        p { font-size: 15px; line-height: 1.6; color: var(--secondary-text); margin-bottom: 20px; }
+
+        .glass-card {
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 24px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-glass);
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            transition: transform 0.2s;
+        }
+        .glass-card:hover { transform: translateY(-2px); }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            font-size: 15px;
+            font-weight: 600;
+            font-family: var(--font-main);
+            cursor: pointer;
+            border: none;
+            margin-bottom: 12px;
+            transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.22s ease, background-color 0.22s ease, color 0.22s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-primary { 
+            background: linear-gradient(135deg, var(--accent-start), var(--accent-end)); 
+            color: white; 
+            box-shadow: var(--shadow-float);
+        }
+        .btn:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.035);
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.38);
+        }
+        .btn:focus-visible {
+            outline: 3px solid rgba(32, 73, 125, 0.35);
+            outline-offset: 3px;
+        }
+        .btn-primary:active { transform: translateY(-1px) scale(0.98); }
+        .btn-secondary { 
+            background: white; 
+            border: 1px solid rgba(0,0,0,0.05); 
+            color: var(--primary-text); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .btn-secondary:hover:not(:disabled) { color: var(--accent-start); border-color: rgba(32, 73, 125, 0.25); }
+        .btn-secondary:active { background: #F9FAFB; transform: translateY(-1px) scale(0.98); }
+
+        .option-item {
+            display: block;
+            width: 100%;
+            background: white;
+            padding: 16px 20px;
+            border-radius: var(--radius-md);
+            margin-bottom: 12px;
+            border: 2px solid rgba(0,0,0,0.04);
+            font-weight: 500;
+            font-size: 14px;
+            font-family: var(--font-main);
+            color: var(--primary-text);
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .option-item:hover { border-color: var(--accent-start); transform: translateX(4px); }
+        .option-item:focus-visible, .topic-option:focus-visible { outline: 3px solid rgba(32, 73, 125, 0.35); outline-offset: 3px; }
+        .option-item:disabled { cursor: default; opacity: 1; }
+        .option-item:disabled:hover { transform: none; }
+        .option-item.selected { border-color: var(--accent-start); background: rgba(32, 73, 125, 0.08); color: var(--accent-start); font-weight: 600; }
+        .option-item.correct { border-color: var(--success); background: #ECFDF5; color: #047857; }
+        .option-item.incorrect {
+            border-color: #EF4444;
+            background: #FEF2F2;
+            color: #B91C1C;
+            animation: wrongAnswer 0.16s ease-in-out 3;
+        }
+        @keyframes wrongAnswer {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-7px); }
+            40%, 80% { transform: translateX(7px); }
+        }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+        .btn[hidden] { display: none; }
+        .step-status { font-size: 13px; text-align: center; margin: -4px 0 16px; }
+        .quiz-feedback { min-height: 20px; margin: 0; font-size: 13px; }
+        .quiz-result-score { margin: 24px 0; color: var(--accent-start); font-size: 52px; font-weight: 700; }
+        .topic-option { width: 100%; margin-bottom: 14px; padding: 20px; border: 1px solid rgba(32, 73, 125, 0.12); border-radius: var(--radius-md); background: white; color: var(--primary-text); text-align: left; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+        .topic-option strong, .topic-option span { display: block; }
+        .topic-option strong { margin-bottom: 6px; font: 600 15px var(--font-main); }
+        .topic-option span { color: var(--secondary-text); font: 13px/1.5 var(--font-main); }
+        .topic-option span:last-child { margin-top: 8px; color: var(--accent-start); font-weight: 700; }
+        .topic-option:hover { border-color: var(--accent-start); transform: translateY(-2px); }
+        
+        .phrase-card {
+            background: white;
+            padding: 18px;
+            border-radius: var(--radius-md);
+            margin-bottom: 14px;
+            border-left: 5px solid var(--accent-start);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+        .welcome-bird-button {
+            display: block;
+            width: min(250px, 72vw);
+            margin: 0 auto 18px;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        .welcome-bird {
+            display: block;
+            width: 100%;
+            overflow: visible;
+        }
+        .welcome-bird .bird-body {
+            transform-box: view-box;
+            transform-origin: 50% 97%;
+            animation: bird-lean 2.8s ease-in-out infinite;
+        }
+        .welcome-bird .bird-wing {
+            transform-box: fill-box;
+            transform-origin: 12% 18%;
+        }
+        .welcome-bird-button:focus-visible { outline: 3px solid var(--accent-start); outline-offset: 5px; border-radius: 50%; }
+        .welcome-bird-button.flap .bird-wing { animation: bird-flap 0.16s ease-in-out 4; }
+        @keyframes bird-lean {
+            0%, 100% { transform: rotate(-4deg); }
+            45% { transform: rotate(5deg); }
+            72% { transform: rotate(-5deg); }
+        }
+        @keyframes bird-flap {
+            0%, 100% { transform: rotate(0deg) scaleY(1); }
+            50% { transform: rotate(-24deg) scaleY(0.82); }
+        }
+        .profile-avatar-button {
+            width: 48px;
+            height: 48px;
+            flex: 0 0 48px;
+            padding: 0;
+            overflow: hidden;
+            border: 2px solid white;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(185,212,51,0.3), rgba(185,212,51,0.12));
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+        .profile-avatar-button img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-avatar-large {
+            display: block;
+            width: 92px;
+            height: 92px;
+            margin: 0 auto 16px;
+            overflow: hidden;
+            border: 3px solid white;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(185,212,51,0.3), rgba(185,212,51,0.12));
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            object-fit: cover;
+        }
+        .profile-avatar-image[hidden] { display: none; }
+        /* FIXED NAVIGATION BAR */
+        .bottom-nav {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            /* CRITICAL FIX: Max-width prevents stretching on desktop */
+            width: calc(100% - 56px);
+            max-width: 424px; 
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            padding: 8px 10px;
+            border-radius: 50px;
+            display: none;
+            justify-content: space-between;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+            z-index: 100;
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+        .bottom-nav.visible { display: flex; }
+        .nav-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            border-radius: 24px;
+            background: #000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+            pointer-events: none;
+            transform-origin: center;
+            will-change: transform, width, height;
+        }
+        .nav-item {
+            position: relative;
+            z-index: 1;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--secondary-text);
+            text-align: center;
+            cursor: pointer;
+            padding: 10px 12px;
+            border-radius: 24px;
+            transition: color 0.2s, transform 0.2s ease;
+        }
+        .nav-item:hover { transform: translateY(-2px); color: var(--accent-start); }
+        .nav-item.active {
+            color: white;
+        }
+        .nav-item.active:hover { color: white; }
+
+        .tag {
+            display: inline-block;
+            padding: 6px 12px;
+            background: linear-gradient(135deg, rgba(185, 212, 51, 0.2), rgba(185, 212, 51, 0.08));
+            color: var(--accent-start);
+            border-radius: 24px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+        .stat-box { 
+            background: white; 
+            padding: 20px; 
+            border-radius: var(--radius-md); 
+            text-align: center; 
+            box-shadow: var(--shadow-glass);
+        }
+        .stat-val { font-size: 28px; font-weight: 700; display: block; margin-bottom: 4px; background: linear-gradient(135deg, var(--accent-start), var(--accent-end)); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-label { font-size: 11px; color: var(--secondary-text); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .home-feature-grid { display: grid; gap: 18px; margin: 10px 0 24px; }
+        .home-feature-card { padding: 24px; border: 1px solid rgba(255,255,255,0.8); border-radius: var(--radius-lg); box-shadow: var(--shadow-float); }
+        .quiz-home-card { background: linear-gradient(145deg, #eaf2d4, #fffef8 70%); }
+        .dictionary-home-card { background: linear-gradient(145deg, #e4eef8, #fff 70%); }
+        .home-feature-icon { display: block; margin-bottom: 12px; font-size: 42px; }
+        .home-feature-card h2 { margin-bottom: 10px; }
+        .home-feature-card p { min-height: 48px; }
+        .home-rank-card { display: flex; align-items: center; gap: 14px; margin: 8px 0 12px; padding: 16px; border: 1px solid rgba(32,73,125,0.1); border-radius: var(--radius-md); background: rgba(255,255,255,0.8); }
+        .home-rank-card > span { font-size: 32px; }
+        .home-rank-card p { margin: 0 0 4px; font-size: 11px; }
+        .home-rank-card h3 { margin: 0; font-size: 14px; }
+        .home-rank-card .btn { width: auto; margin: 0 0 0 auto; padding: 10px 14px; font-size: 12px; }
+        .home-progress-summary { margin: 0; text-align: center; font-size: 12px; }
+        .home-progress-summary strong { color: var(--accent-start); }
+        .progress-rank-card, .profile-rank-card { display: flex; align-items: center; gap: 16px; }
+        .progress-rank-card > span, .rank-emblem { font-size: 40px; }
+        .progress-rank-card h3, .profile-rank-card h3 { margin: 0 0 6px; }
+        .progress-rank-card p, .profile-rank-card p { margin: 0 0 4px; font-size: 13px; }
+        .profile-rank-card { display: block; text-align: center; padding: 26px; }
+        .profile-rank-card .rank-emblem { display: block; margin-bottom: 8px; font-size: 52px; }
+        .topic-progress-list { display: grid; gap: 12px; margin-bottom: 24px; }
+        .topic-progress-item { padding: 14px 16px; border-radius: var(--radius-md); background: rgba(255,255,255,0.88); box-shadow: var(--shadow-glass); }
+        .topic-progress-heading { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 9px; font-size: 12px; font-weight: 600; }
+        .topic-progress-heading span:last-child { color: var(--accent-start); white-space: nowrap; }
+        .topic-progress-track { height: 10px; overflow: hidden; border-radius: 999px; background: rgba(32,73,125,0.1); }
+        .topic-progress-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, #20497d, #6e9a43); transition: width 0.3s ease; }
+
+        input[type="text"] {
+            font-family: var(--font-main);
+            width: 100%;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid #E5E7EB;
+            font-size: 15px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .dictionary-entry {
+            padding: 20px;
+            border: 1px solid rgba(32, 73, 125, 0.14);
+        }
+        .dictionary-entry p { margin-bottom: 14px; }
+        .dictionary-primary {
+            background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+        }
+        .dictionary-search label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary-text);
+        }
+        .dictionary-input {
+            width: 100%;
+            min-width: 0;
+            padding: 15px 16px;
+            border: 1px solid #E5E7EB;
+            border-radius: var(--radius-md);
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            font: 15px var(--font-main);
+            color: var(--primary-text);
+        }
+        .dictionary-input:focus {
+            outline: 2px solid rgba(32, 73, 125, 0.35);
+            border-color: var(--accent-start);
+        }
+        .dictionary-search .btn { margin-top: 12px; }
+        .dictionary-status {
+            min-height: 20px;
+            margin: 4px 0 16px;
+            font-size: 13px;
+        }
+        .dictionary-result-card h3 {
+            margin-bottom: 6px;
+            font-size: 24px;
+            overflow-wrap: anywhere;
+        }
+        .dictionary-phonetic {
+            margin: 0 0 14px;
+            color: var(--accent-start);
+            font-size: 14px;
+        }
+        .dictionary-definition { margin-bottom: 16px; }
+        .dictionary-meaning { padding: 14px 0; border-top: 1px solid rgba(32, 73, 125, 0.1); }
+        .dictionary-meaning:first-child { border-top: 0; }
+        .dictionary-meaning h4 { margin-bottom: 8px; color: var(--accent-start); font-size: 13px; }
+        .dictionary-meaning ol { padding-left: 22px; }
+        .dictionary-meaning li { margin-bottom: 10px; color: var(--primary-text); font-size: 13px; line-height: 1.55; }
+        .dictionary-example { display: block; margin-top: 4px; color: var(--secondary-text); font-style: italic; }
+        .dictionary-audio {
+            width: auto;
+            margin: 0;
+            padding: 12px 16px;
+        }
+        .accent-heading { margin-top: 4px; }
+        .accent-heading + p { margin-bottom: 16px; }
+        .dictionary-play-all { margin-bottom: 16px; }
+        .accent-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+        .accent-option { position: relative; min-width: 0; }
+        .accent-option:last-child:nth-child(odd) {
+            grid-column: 1 / -1;
+            width: calc(50% - 6px);
+            justify-self: center;
+        }
+        .accent-button {
+            min-height: 58px;
+            margin: 0;
+            padding: 12px 10px;
+            justify-content: flex-start;
+            border: 1px solid rgba(32, 73, 125, 0.12);
+            font-size: 12px;
+            text-align: left;
+            line-height: 1.35;
+        }
+        .accent-button:disabled { opacity: 0.52; cursor: not-allowed; }
+        .accent-flag { margin-right: 2px; font-size: 19px; }
+        .voice-tooltip {
+            position: absolute;
+            z-index: 5;
+            left: 50%;
+            bottom: calc(100% + 6px);
+            width: max-content;
+            max-width: 180px;
+            padding: 7px 9px;
+            border-radius: 8px;
+            background: #1F2937;
+            color: white;
+            font-size: 10px;
+            line-height: 1.35;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transform: translate(-50%, 3px);
+            transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+            pointer-events: none;
+        }
+        .accent-option:hover .voice-tooltip,
+        .accent-option:focus-within .voice-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, 0);
+        }
+        .accent-status { min-height: 18px; margin: 14px 0 0; font-size: 12px; }
+        .dictionary-back { margin-top: 8px; }
+        .accent-volume-note {
+            margin: 14px 0 16px;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+        .accent-guide-item {
+            overflow: hidden;
+            margin-bottom: 12px;
+            border: 1px solid rgba(32, 73, 125, 0.14);
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+        .accent-guide-item summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 16px;
+            color: var(--primary-text);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            list-style: none;
+        }
+        .accent-guide-item summary::-webkit-details-marker { display: none; }
+        .accent-guide-item summary::after {
+            content: '⌄';
+            color: var(--accent-start);
+            font-size: 20px;
+            line-height: 1;
+            transition: transform 0.2s ease;
+        }
+        .accent-guide-item[open] summary::after { transform: rotate(180deg); }
+        .accent-guide-content {
+            padding: 0 16px 16px;
+            border-top: 1px solid rgba(32, 73, 125, 0.1);
+        }
+        .accent-guide-content p { margin: 12px 0; font-size: 13px; }
+        .accent-guide-content a {
+            color: var(--accent-start);
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+        .accent-guide-back { margin-top: 8px; }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                scroll-behavior: auto !important;
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <div id="p-welcome" class="page active" style="padding-top: 120px; text-align: center;">
+        <button type="button" class="welcome-bird-button" id="welcome-bird-button" aria-label="Make the bird flap its wings">
+            <svg class="welcome-bird" viewBox="0 0 320 390" role="img" aria-label="A blue and green bird with a bright green beak">
+                <circle cx="160" cy="195" r="180" fill="#f3f8e9"/>
+                <defs>
+                    <linearGradient id="bird-body-gradient" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#376da3"/>
+                        <stop offset="100%" stop-color="#20497d"/>
+                    </linearGradient>
+                </defs>
+                <g class="bird-body">
+                    <ellipse cx="166" cy="257" rx="125" ry="126" fill="url(#bird-body-gradient)"/>
+                    <circle cx="151" cy="117" r="116" fill="url(#bird-body-gradient)"/>
+                    <g class="bird-wing">
+                        <path d="M171 139 C210 132 256 178 275 244 C291 300 267 337 232 321 C197 305 172 244 153 197 C140 166 145 146 171 139Z" fill="#b9d433"/>
+                        <path d="M233 248 C256 265 283 267 294 293 C307 325 286 359 258 348 C228 337 208 300 205 268 C203 255 205 247 206 239Z" fill="#879f24"/>
+                    </g>
+                    <circle cx="113" cy="82" r="32" fill="#fff"/>
+                    <circle cx="117" cy="84" r="22" fill="#171522"/>
+                    <circle cx="124" cy="75" r="6" fill="#fff"/>
+                    <path d="M11 119 C11 95 31 82 51 90 C65 96 74 110 68 126 C61 144 38 153 21 143 C14 138 11 129 11 119Z" fill="#c8df43"/>
+                    <circle cx="32" cy="105" r="8" fill="#e7f2a5"/>
+                </g>
+                <path d="M118 343 V380 M189 343 V380" stroke="#20497d" stroke-width="18" stroke-linecap="round"/>
+                <path d="M82 379 H220" stroke="#b9d433" stroke-width="19" stroke-linecap="round"/>
+                <circle cx="37" cy="370" r="7" fill="#b9d433"/>
+            </svg>
+        </button>
+        <div style="margin-bottom: 40px;">
+            <h1>Bolchaal</h1>
+            <p style="font-size: 18px; color: var(--secondary-text); font-weight: 500;">Practice English grammar, one question at a time.</p>
+        </div>
+        <div class="glass-card" style="text-align: left; margin-bottom: 32px;">
+            <h3>Build your grammar confidence</h3>
+            <p style="margin-bottom: 0;">Choose from six topics and test what you know with a randomized 10-question quiz.</p>
+            <div style="height: 4px; width: 50px; background: linear-gradient(90deg, var(--accent-start), var(--accent-end)); border-radius: 2px; margin-top: 16px;"></div>
+        </div>
+        <button class="btn btn-primary" onclick="goTo('p-setup')">Start Grammar Quiz</button>
+    </div>
+
+    <div id="p-setup" class="page">
+        <h2>Make this your space</h2>
+        <p>Set up your learner profile before choosing a topic.</p>
+        <label style="font-weight: 600; display:block; margin: 24px 0 10px 0; font-size: 13px; color: var(--primary-text);">What should we call you?</label>
+        <input type="text" id="username-input" placeholder="Name or nickname">
+        <button class="btn btn-primary" style="margin-top: 24px;" onclick="completeSetup()">Continue as guest</button>
+    </div>
+
+    <div id="p-home" class="page">
+        <header style="margin-bottom: 28px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <p style="margin:0; font-size: 14px; font-weight: 500;" id="greeting-text">Good morning,</p>
+                <h2 style="margin:0;" id="display-name">Learner</h2>
+            </div>
+            <button type="button" class="profile-avatar-button" aria-label="Open your profile" onclick="goTo('p-profile')">
+                <img class="profile-avatar-image" alt="" hidden>
+            </button>
+        </header>
+        <div class="home-feature-grid">
+            <section class="home-feature-card quiz-home-card">
+                <span class="home-feature-icon" aria-hidden="true">📝</span>
+                <span class="tag">60-question bank</span>
+                <h2>Grammar Quiz</h2>
+                <p>Build your skills across six topics. Pick up where you left off.</p>
+                <button type="button" class="btn btn-primary" onclick="goTo('p-topics')">Choose a Topic</button>
+            </section>
+            <section class="home-feature-card dictionary-home-card">
+                <span class="home-feature-icon" aria-hidden="true">📖</span>
+                <span class="tag">Word Explorer</span>
+                <h2>Dictionary</h2>
+                <p>Look up a word, hear its pronunciation, and explore different accents.</p>
+                <button type="button" class="btn btn-secondary" onclick="goTo('p-dictionary')">Open Dictionary</button>
+            </section>
+        </div>
+        <section class="home-rank-card">
+            <span id="home-rank-symbol" aria-hidden="true">🌱</span>
+            <div>
+                <p>Your current rank</p>
+                <h3 id="home-rank-title">Grammar Seedling</h3>
+            </div>
+            <button type="button" class="btn btn-secondary" onclick="goTo('p-progress')">Progress</button>
+        </section>
+        <p class="home-progress-summary"><strong id="home-solved-count">0</strong> questions solved <span aria-hidden="true">·</span> <strong id="home-topics-count">0/6</strong> topics completed</p>
+    </div>
+
+    <div id="p-topics" class="page">
+        <button type="button" class="btn btn-secondary" onclick="goTo('p-home')">Back to Home</button>
+        <h2>Choose a Grammar Topic</h2>
+        <p>Each topic has 10 questions in a randomized order. Your place is kept until you refresh.</p>
+        <div id="topic-list"></div>
+    </div>
+
+    <div id="p-quiz" class="page">
+        <button type="button" class="btn btn-secondary" onclick="goTo('p-topics')">Exit Quiz</button>
+        <span class="tag" id="quiz-topic-title">Topic</span>
+        <h2 id="quiz-question-title">Question</h2>
+        <p id="quiz-question-progress" class="step-status" aria-live="polite"></p>
+        <div id="quiz-options"></div>
+        <p id="quiz-feedback" class="quiz-feedback" role="status" aria-live="polite"></p>
+        <button id="next-question" type="button" class="btn btn-primary" onclick="nextQuizQuestion()" hidden>Next Question</button>
+    </div>
+
+    <div id="p-quiz-results" class="page" style="text-align: center; padding-top: 60px;">
+        <span class="tag" id="result-topic-title">Topic</span>
+        <h2>Quiz Complete!</h2>
+        <p class="quiz-result-score"><span id="result-correct">0</span>/10</p>
+        <p id="result-summary"></p>
+        <button type="button" class="btn btn-primary" onclick="goTo('p-topics')">Choose Another Topic</button>
+        <button type="button" class="btn btn-secondary" onclick="goTo('p-home')">Back Home</button>
+    </div>
+
+    <div class="bottom-nav">
+        <span class="nav-indicator" aria-hidden="true"></span>
+        <div class="nav-item active" onclick="goTo('p-home')">Home</div>
+        <div class="nav-item" onclick="goTo('p-progress')">Progress</div>
+        <div class="nav-item" onclick="goTo('p-profile')">Profile</div>
+        <div class="nav-item" onclick="goTo('p-about')">About</div>
+    </div>
+
+    <div id="p-progress" class="page">
+        <h2>Your Progress</h2>
+        <div class="stat-grid">
+            <div class="stat-box">
+                <span class="stat-val" id="prog-solved">0</span>
+                <span class="stat-label">Questions solved</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-val" id="prog-topics">0/6</span>
+                <span class="stat-label">Topics complete</span>
+            </div>
+        </div>
+        <div class="glass-card progress-rank-card">
+            <span id="progress-rank-symbol" aria-hidden="true">🌱</span>
+            <div>
+                <h3 id="progress-rank-title">Grammar Seedling</h3>
+                <p id="progress-rank-next"></p>
+            </div>
+        </div>
+        <h3>Questions by topic</h3>
+        <div id="progress-topic-list" class="topic-progress-list"></div>
+    </div>
+
+    <div id="p-profile" class="page">
+        <h2>Your Profile</h2>
+        <p id="profile-summary"></p>
+        <img class="profile-avatar-large profile-avatar-image" alt="" hidden>
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('profile-photo-input').click()">Choose profile photo</button>
+        <input id="profile-photo-input" type="file" accept="image/*" hidden>
+        <p id="profile-photo-status" role="status" aria-live="polite"></p>
+        <div class="glass-card profile-rank-card">
+            <span class="rank-emblem" id="profile-rank-symbol" aria-hidden="true">🌱</span>
+            <h3 id="profile-rank-title">Grammar Seedling</h3>
+            <p id="profile-rank-count">0 of 60 questions solved</p>
+            <p id="profile-rank-next"></p>
+        </div>
+        <h3>Questions solved by topic</h3>
+        <div id="profile-topic-chart" class="topic-progress-list"></div>
+    </div>
+
+    <div id="p-about" class="page">
+        <h2>About Bolchaal</h2>
+        <p>Bolchaal helps you practise English grammar through short, focused quizzes.</p>
+        <div class="glass-card">
+            <h3>Six topics. Sixty questions.</h3>
+            <p>Choose a topic and practise at your own pace.</p>
+        </div>
+    </div>
+
+    <div id="p-dictionary" class="page">
+        <button type="button" class="btn btn-secondary dictionary-back" onclick="goTo('p-home')">Back to Dashboard</button>
+        <span class="tag">Word Explorer</span>
+        <h2>Dictionary</h2>
+        <p>Find a definition and listen to how the word sounds around the world.</p>
+        <form id="dictionary-search-form" class="dictionary-search">
+            <label for="dictionary-word-input">Search for a word</label>
+            <input id="dictionary-word-input" class="dictionary-input" type="search" maxlength="80" autocomplete="off" placeholder="Type an English word" required>
+            <button type="submit" class="btn btn-primary dictionary-primary">Search</button>
+        </form>
+        <p id="dictionary-status" class="dictionary-status" role="status" aria-live="polite"></p>
+        <div id="dictionary-results" hidden>
+            <div class="glass-card dictionary-result-card">
+                <h3 id="dictionary-result-word"></h3>
+                <p id="dictionary-result-phonetic" class="dictionary-phonetic"></p>
+                <div id="dictionary-result-meanings" class="dictionary-definition"></div>
+                <button id="dictionary-original-audio" type="button" class="btn btn-secondary dictionary-audio" hidden>Play Original Audio</button>
+            </div>
+            <section class="glass-card">
+                <h3 class="accent-heading">Hear it in different accents</h3>
+                <p>Choose a voice, or play every available accent in sequence.</p>
+                <button id="dictionary-play-all" type="button" class="btn btn-primary dictionary-primary dictionary-play-all" disabled>Play All Accents</button>
+                <div id="dictionary-accent-grid" class="accent-grid"></div>
+                <p id="dictionary-accent-status" class="accent-status" role="status" aria-live="polite"></p>
+                <p class="accent-volume-note">Voice playback is set to the browser's maximum volume. The device's voice engine and audio settings can still affect loudness.</p>
+                <button type="button" class="btn btn-secondary" onclick="goTo('p-accent-guide')">Learn More About Accents</button>
+            </section>
+        </div>
+    </div>
+
+    <div id="p-accent-guide" class="page">
+        <button type="button" class="btn btn-secondary accent-guide-back" onclick="goTo('p-dictionary')">Back to Dictionary</button>
+        <span class="tag">Language &amp; Culture</span>
+        <h2>Why accents sound different</h2>
+        <p>Accents grow through generations of language change, migration, contact, and local identity. These short histories describe the voice models offered here—not every way people speak these languages.</p>
+
+        <details class="accent-guide-item">
+            <summary><span>🇺🇸 US English</span></summary>
+            <div class="accent-guide-content">
+                <p>English in North America developed into many regional varieties as communities settled across a vast continent and later migration brought new influences. Many US accents pronounce the “r” in words like <em>car</em>; others do not, so there is no single US accent.</p>
+                <a href="https://en.wikipedia.org/wiki/American_English" target="_blank" rel="noopener noreferrer">Source: American English</a><br>
+                <a href="https://en.wikipedia.org/wiki/Rhoticity_in_English" target="_blank" rel="noopener noreferrer">More: Rhoticity in English</a>
+            </div>
+
+        </details>
+
+        <details class="accent-guide-item">
+            <summary><span>🇬🇧 British English</span></summary>
+            <div class="accent-guide-content">
+                <p>British English is an umbrella for many varieties across the UK, not one accent. Local history shaped their sounds; for example, many accents in southern England do not pronounce “r” after a vowel, while some UK accents do.</p>
+                <a href="https://en.wikipedia.org/wiki/British_English" target="_blank" rel="noopener noreferrer">Source: British English</a><br>
+                <a href="https://en.wikipedia.org/wiki/Rhoticity_in_English" target="_blank" rel="noopener noreferrer">More: Rhoticity in English</a>
+            </div>
+        </details>
+
+        <details class="accent-guide-item">
+            <summary><span>🇫🇷 French</span></summary>
+            <div class="accent-guide-content">
+                <p>French developed from spoken Latin in Roman Gaul, with influence from Celtic languages and Frankish speech. It later spread through education, government, and migration. The French voice here is one standard-style model among many French varieties worldwide.</p>
+                <a href="https://en.wikipedia.org/wiki/French_language" target="_blank" rel="noopener noreferrer">Source: French language</a><br>
+                <a href="https://en.wikipedia.org/wiki/Standard_French" target="_blank" rel="noopener noreferrer">More: Standard French</a>
+            </div>
+        </details>
+
+        <details class="accent-guide-item">
+            <summary><span>🇩🇪 German</span></summary>
+            <div class="accent-guide-content">
+                <p>German has a wide range of regional dialects and national standards. Standard German developed as a shared form for writing and formal communication across dialect areas, while regional speech continues to shape pronunciation.</p>
+                <a href="https://en.wikipedia.org/wiki/German_language" target="_blank" rel="noopener noreferrer">Source: German language</a><br>
+                <a href="https://en.wikipedia.org/wiki/Standard_German" target="_blank" rel="noopener noreferrer">More: Standard German</a>
+            </div>
+        </details>
+
+        <details class="accent-guide-item">
+            <summary><span>🇮🇹 Italian</span></summary>
+            <div class="accent-guide-content">
+                <p>Modern standard Italian is based on literary Florentine Tuscan. It became a common national language gradually, especially through schooling and mass communication; local speech traditions still give Italian accents strong regional character.</p>
+                <a href="https://en.wikipedia.org/wiki/Italian_language" target="_blank" rel="noopener noreferrer">Source: Italian language</a>
+            </div>
+        </details>
+
+        <details class="accent-guide-item">
+            <summary><span>🇨🇳 Chinese / Mandarin</span></summary>
+            <div class="accent-guide-content">
+                <p>Mandarin includes many regional varieties. The standard Mandarin voice is largely based on Beijing pronunciation and was established as a shared form for communication; regional accents and vocabulary remain diverse. Mandarin tones help distinguish word meanings.</p>
+                <a href="https://en.wikipedia.org/wiki/Mandarin_Chinese" target="_blank" rel="noopener noreferrer">Source: Mandarin Chinese</a><br>
+                <a href="https://en.wikipedia.org/wiki/Standard_Chinese" target="_blank" rel="noopener noreferrer">More: Standard Chinese</a>
+            </div>
+        </details>
+
+        <details class="accent-guide-item">
+            <summary><span>🇯🇵 Japanese</span></summary>
+            <div class="accent-guide-content">
+                <p>Japanese has regional dialects with differences in pronunciation, rhythm, and vocabulary. The standard model is associated with Tokyo speech and spread through national education and broadcasting; it is only one of Japan's many ways of speaking.</p>
+                <a href="https://en.wikipedia.org/wiki/Japanese_language" target="_blank" rel="noopener noreferrer">Source: Japanese language</a><br>
+                <a href="https://en.wikipedia.org/wiki/Japanese_dialects" target="_blank" rel="noopener noreferrer">More: Japanese dialects</a>
+            </div>
+        </details>
+
+        <details class="accent-guide-item">
+            <summary><span>🇷🇺 Russian</span></summary>
+            <div class="accent-guide-content">
+                <p>Russian developed within the East Slavic language family and is spoken across a large region. A shared literary and educational standard helped people communicate across it, while regional speech retains differences in sounds and rhythm.</p>
+                <a href="https://en.wikipedia.org/wiki/Russian_language" target="_blank" rel="noopener noreferrer">Source: Russian language</a>
+            </div>
+        </details>
+    </div>
+</div>
+
+<script>
+    const grammarTopics = [
+    {
+        "bankTitle": "EVERYDAY TENSES: ROUTINES VS. RIGHT NOW",
+        "questions": [
+            {
+                "question": "Maya usually ___ the bus to work, but today she is walking.",
+                "options": [
+                    "takes",
+                    "is taking",
+                    "take"
+                ],
+                "answer": 0,
+                "explanation": "B describes an action happening now; the sentence describes her usual routine. C does not agree with singular subject “Maya.”"
+            },
+            {
+                "question": "Be quiet! The baby ___ right now.",
+                "options": [
+                    "sleeps",
+                    "is sleeping",
+                    "sleep"
+                ],
+                "answer": 1,
+                "explanation": "A is the simple present and usually describes a habit, not an action happening at this moment. C does not agree with singular “the baby.”"
+            },
+            {
+                "question": "___ your brother ___ in the city every day?",
+                "options": [
+                    "Is / working",
+                    "Does / work",
+                    "Do / works"
+                ],
+                "answer": 1,
+                "explanation": "A asks about an action in progress, not a daily routine. C uses “do” with a singular subject and incorrectly adds -s after the auxiliary."
+            },
+            {
+                "question": "Look! The children ___ a snowman.",
+                "options": [
+                    "build",
+                    "builds",
+                    "are building"
+                ],
+                "answer": 2,
+                "explanation": "A suggests a general activity or routine, not what is happening now. B also has incorrect agreement and does not express an action in progress."
+            },
+            {
+                "question": "I ___ coffee, so I usually drink tea.",
+                "options": [
+                    "am not liking",
+                    "don’t like",
+                    "doesn’t like"
+                ],
+                "answer": 1,
+                "explanation": "A stative verb “like” is normally used in the simple present for a general preference. C uses “doesn’t” with “I”; the correct negative auxiliary is “don’t.”"
+            },
+            {
+                "question": "Why ___ you ___ my jacket? It’s cold outside!",
+                "options": [
+                    "do / wear",
+                    "are / wearing",
+                    "is / wearing"
+                ],
+                "answer": 1,
+                "explanation": "A asks about a habit, but the situation points to what the person has on now. C uses “is” with “you”; use “are.”"
+            },
+            {
+                "question": "Our English class ___ at 9:00 every Monday.",
+                "options": [
+                    "starts",
+                    "is starting",
+                    "start"
+                ],
+                "answer": 0,
+                "explanation": "B can describe a temporary arrangement, but “every Monday” marks a regular schedule. C does not agree with singular “class.”"
+            },
+            {
+                "question": "This week, I ___ with my aunt while my apartment is being painted.",
+                "options": [
+                    "stay",
+                    "am staying",
+                    "stays"
+                ],
+                "answer": 1,
+                "explanation": "A usually describes a regular or permanent situation; “this week” is temporary. C does not agree with “I.”"
+            },
+            {
+                "question": "Listen! Someone ___ at the door.",
+                "options": [
+                    "knocks",
+                    "is knocking",
+                    "knock"
+                ],
+                "answer": 1,
+                "explanation": "A describes a habit or repeated event rather than the sound happening now. C lacks the -s needed for a simple-present singular subject, and it does not indicate an ongoing action."
+            },
+            {
+                "question": "My parents ___ TV in the evening; they prefer reading.",
+                "options": [
+                    "aren’t usually watching",
+                    "don’t usually watch",
+                    "doesn’t usually watch"
+                ],
+                "answer": 1,
+                "explanation": "A uses the continuous form for a usual preference; the simple present is natural here. C uses “doesn’t” with plural “parents”; use “don’t.”"
+            }
+        ],
+        "id": "topic-1",
+        "title": "Everyday Tenses",
+        "subtitle": "Routines vs. right now"
+    },
+    {
+        "bankTitle": "POLITE REQUESTS & MODALS",
+        "questions": [
+            {
+                "question": "You want the menu at a café. What is the most polite request?",
+                "options": [
+                    "Give me the menu.",
+                    "Could I have the menu, please?",
+                    "I want menu now."
+                ],
+                "answer": 1,
+                "explanation": "A is an order and may sound abrupt. C is blunt, omits “the,” and “now” can sound demanding."
+            },
+            {
+                "question": "Ask a colleague to open the window politely.",
+                "options": [
+                    "Would you mind opening the window?",
+                    "Open the window.",
+                    "You must open the window."
+                ],
+                "answer": 0,
+                "explanation": "B is an unsoftened command. C expresses obligation rather than a courteous request."
+            },
+            {
+                "question": "You need to borrow a pen. What should you say?",
+                "options": [
+                    "Can I borrow your pen, please?",
+                    "Give me your pen.",
+                    "I take your pen, okay?"
+                ],
+                "answer": 0,
+                "explanation": "B sounds like a command. C assumes permission and uses an unnatural phrasing; ask before taking it."
+            },
+            {
+                "question": "Ask a stranger for directions in a courteous way.",
+                "options": [
+                    "Tell me where the station is.",
+                    "Could you tell me how to get to the station?",
+                    "You know station?"
+                ],
+                "answer": 1,
+                "explanation": "A is direct and can sound demanding. C is grammatically incomplete and may sound abrupt."
+            },
+            {
+                "question": "Your friend offers you tea. You would like some. What is a natural response?",
+                "options": [
+                    "Yes, please.",
+                    "Give tea.",
+                    "I demand tea."
+                ],
+                "answer": 0,
+                "explanation": "B is a command rather than an acceptance. C is unnecessarily forceful and unnatural in this situation."
+            },
+            {
+                "question": "Ask your teacher for permission to leave early.",
+                "options": [
+                    "May I leave a little early today?",
+                    "I leave early today.",
+                    "I must leave early, teacher."
+                ],
+                "answer": 0,
+                "explanation": "B states an intention without asking permission. C sounds demanding and does not make a polite request."
+            },
+            {
+                "question": "You want someone to repeat a sentence. What is the most polite option?",
+                "options": [
+                    "Say that again!",
+                    "Could you say that again, please?",
+                    "You didn’t speak clearly."
+                ],
+                "answer": 1,
+                "explanation": "A is an abrupt command. C blames the speaker instead of politely asking for repetition."
+            },
+            {
+                "question": "Ask a hotel receptionist to call a taxi.",
+                "options": [
+                    "Would you be able to call a taxi for me?",
+                    "Call taxi for me.",
+                    "You will call a taxi."
+                ],
+                "answer": 0,
+                "explanation": "B is a bare command and is missing “a.” C sounds like an instruction or assumption, not a request."
+            },
+            {
+                "question": "A coworker is carrying boxes. Offer help politely.",
+                "options": [
+                    "Shall I help you with those boxes?",
+                    "You can’t carry those.",
+                    "Give me the boxes."
+                ],
+                "answer": 0,
+                "explanation": "B may sound critical and does not offer help directly. C is an order, not a courteous offer."
+            },
+            {
+                "question": "You want to use a friend’s phone briefly. What is the most polite request?",
+                "options": [
+                    "Could I use your phone for a moment?",
+                    "I’m using your phone.",
+                    "Hand over your phone."
+                ],
+                "answer": 0,
+                "explanation": "B announces action without seeking consent. C is a forceful command."
+            }
+        ],
+        "id": "topic-2",
+        "title": "Polite Requests & Modals",
+        "subtitle": "Make requests and offers politely"
+    },
+    {
+        "bankTitle": "PREPOSITIONS OF TIME & PLACE: IN, ON, AT",
+        "questions": [
+            {
+                "question": "The meeting begins ___ 3:00 PM ___ Monday.",
+                "options": [
+                    "at / on",
+                    "in / at",
+                    "on / in"
+                ],
+                "answer": 0,
+                "explanation": "B uses “in” instead of “at” for a precise clock time and “at” instead of “on” for a day. C reverses the usual choices: use “at” for the time and “on” for the day."
+            },
+            {
+                "question": "Her birthday is ___ July.",
+                "options": [
+                    "at",
+                    "in",
+                    "on"
+                ],
+                "answer": 1,
+                "explanation": "A is used for precise times or locations, not a month. C is used for a specific date or day, not a month by itself."
+            },
+            {
+                "question": "We have lunch ___ noon.",
+                "options": [
+                    "on",
+                    "at",
+                    "in"
+                ],
+                "answer": 1,
+                "explanation": "A is used with days and dates. C is used with broader periods such as months, years, and parts of the day."
+            },
+            {
+                "question": "The picture is ___ the wall above the sofa.",
+                "options": [
+                    "on",
+                    "at",
+                    "in"
+                ],
+                "answer": 0,
+                "explanation": "B is used for a point or specific place, not the surface supporting a picture. C suggests something inside the wall."
+            },
+            {
+                "question": "The keys are ___ my bag.",
+                "options": [
+                    "on",
+                    "in",
+                    "at"
+                ],
+                "answer": 1,
+                "explanation": "A means on the bag’s surface. C marks a point or location and does not express that the keys are inside it."
+            },
+            {
+                "question": "Let’s meet ___ the entrance at 6:30.",
+                "options": [
+                    "at",
+                    "in",
+                    "on"
+                ],
+                "answer": 0,
+                "explanation": "B would usually mean inside an entrance area and is not the usual way to name a meeting point. C is for a surface or a day/date."
+            },
+            {
+                "question": "The conference is ___ Friday morning.",
+                "options": [
+                    "at",
+                    "on",
+                    "in"
+                ],
+                "answer": 1,
+                "explanation": "A is used with a precise time such as “at 9:00,” not a day plus part of day. C is used for “the morning” generally, but the specified day calls for “on.”"
+            },
+            {
+                "question": "My grandparents moved here ___ 2018.",
+                "options": [
+                    "on",
+                    "at",
+                    "in"
+                ],
+                "answer": 2,
+                "explanation": "A is used with a particular date or day. B is for precise times or named points, not a year."
+            },
+            {
+                "question": "The cat is sleeping ___ the table.",
+                "options": [
+                    "under",
+                    "at",
+                    "in"
+                ],
+                "answer": 0,
+                "explanation": "B means at a location and does not describe the cat’s position relative to the table. C would mean inside the table, which is not the intended position."
+            },
+            {
+                "question": "There is a small café ___ the bank and the post office.",
+                "options": [
+                    "between",
+                    "at",
+                    "on"
+                ],
+                "answer": 0,
+                "explanation": "B identifies a point but does not show the café’s position relative to two places. C describes a surface or a street/address context, not a position separating two places."
+            }
+        ],
+        "id": "topic-3",
+        "title": "Prepositions of Time & Place",
+        "subtitle": "Choose in, on, at, and place prepositions"
+    },
+    {
+        "bankTitle": "COUNTABLE & UNCOUNTABLE: MUCH, MANY, SOME, ANY",
+        "questions": [
+            {
+                "question": "Do you have ___ water? We need to fill this bottle.",
+                "options": [
+                    "many",
+                    "any",
+                    "a few"
+                ],
+                "answer": 1,
+                "explanation": "A is used with plural countable nouns, but “water” is uncountable. C is also used with plural countable nouns, not “water.”"
+            },
+            {
+                "question": "How ___ apples are left in the bowl?",
+                "options": [
+                    "much",
+                    "many",
+                    "any"
+                ],
+                "answer": 1,
+                "explanation": "A is used with uncountable nouns; “apples” are countable and plural. C can be used before a noun in questions (“Are there any apples?”), but it cannot replace the quantity word in “How ___.”"
+            },
+            {
+                "question": "There isn’t ___ milk in the fridge.",
+                "options": [
+                    "many",
+                    "much",
+                    "a few"
+                ],
+                "answer": 1,
+                "explanation": "A is used with plural countable nouns. C is used with plural countable nouns and would require a positive amount, not this negative construction with uncountable “milk.”"
+            },
+            {
+                "question": "We bought ___ oranges for the picnic.",
+                "options": [
+                    "some",
+                    "much",
+                    "any"
+                ],
+                "answer": 0,
+                "explanation": "B is used with uncountable nouns, not plural countable “oranges.” C is common in questions and negatives; in this positive statement, “some” is the natural choice."
+            },
+            {
+                "question": "How ___ time do we have before the train leaves?",
+                "options": [
+                    "many",
+                    "much",
+                    "a few"
+                ],
+                "answer": 1,
+                "explanation": "A is used with plural countable nouns; “time” here is uncountable. C requires a plural countable noun and would not fit “time.”"
+            },
+            {
+                "question": "There are ___ chairs in the meeting room, so everyone can sit.",
+                "options": [
+                    "plenty of",
+                    "much",
+                    "any"
+                ],
+                "answer": 0,
+                "explanation": "B is used with uncountable nouns and does not fit plural “chairs.” C is not used to express an ample quantity in this positive statement."
+            },
+            {
+                "question": "Would you like ___ tea?",
+                "options": [
+                    "some",
+                    "many",
+                    "a few"
+                ],
+                "answer": 0,
+                "explanation": "B is used with plural countable nouns, while “tea” is uncountable here. C also needs a plural countable noun."
+            },
+            {
+                "question": "There aren’t ___ clean plates in the cupboard.",
+                "options": [
+                    "much",
+                    "many",
+                    "a little"
+                ],
+                "answer": 1,
+                "explanation": "A and C are used with uncountable nouns; “plates” are countable and plural."
+            },
+            {
+                "question": "I only need ___ information about the bus schedule.",
+                "options": [
+                    "a few",
+                    "a little",
+                    "many"
+                ],
+                "answer": 1,
+                "explanation": "“Information” is uncountable, so A and C, which go with plural countable nouns, are incorrect."
+            },
+            {
+                "question": "We don’t have ___ eggs, but we do have ___ flour.",
+                "options": [
+                    "any / some",
+                    "much / many",
+                    "some / many"
+                ],
+                "answer": 0,
+                "explanation": "B reverses the forms: “eggs” are countable and “flour” is uncountable. C uses “some” in a negative clause where “any” is expected, and “many” does not fit uncountable “flour.”"
+            }
+        ],
+        "id": "topic-4",
+        "title": "Countable & Uncountable Nouns",
+        "subtitle": "Use much, many, some, and any"
+    },
+    {
+        "bankTitle": "COMMON CONFUSING WORD PAIRS",
+        "questions": [
+            {
+                "question": "Could you ___ me a favor?",
+                "options": [
+                    "make",
+                    "do",
+                    "give"
+                ],
+                "answer": 1,
+                "explanation": "“Do someone a favor” is the standard expression. A is used in phrases like “make a decision,” not “make a favor.” C does not form the usual expression."
+            },
+            {
+                "question": "I need to ___ my teacher that I will be late.",
+                "options": [
+                    "say",
+                    "tell",
+                    "speak"
+                ],
+                "answer": 1,
+                "explanation": "“Tell” normally takes a person as its object (“tell my teacher”). A usually needs “to” before the listener or is followed by the words spoken. C is not used with a person in this pattern; say “speak to my teacher.”"
+            },
+            {
+                "question": "Please ___ me your name so I can write it down.",
+                "options": [
+                    "tell",
+                    "say",
+                    "talk"
+                ],
+                "answer": 0,
+                "explanation": "“Tell me your name” is the standard pattern. B would need “say your name to me.” C usually takes “to/with” for the listener and does not fit this structure."
+            },
+            {
+                "question": "We watched the children ___ in the school play.",
+                "options": [
+                    "look",
+                    "see",
+                    "perform"
+                ],
+                "answer": 2,
+                "explanation": "A means direct your eyes toward something, not observe an event from beginning to end. B means notice or perceive, and does not express the sustained activity as clearly as “watched … perform.”"
+            },
+            {
+                "question": "___ at that beautiful rainbow!",
+                "options": [
+                    "Watch",
+                    "Look",
+                    "See"
+                ],
+                "answer": 1,
+                "explanation": "A is usually for something changing or continuing over time, such as a match. C describes perceiving something, not the usual command to direct your eyes toward it."
+            },
+            {
+                "question": "Could I ___ your charger for an hour and return it later?",
+                "options": [
+                    "lend",
+                    "borrow",
+                    "owe"
+                ],
+                "answer": 1,
+                "explanation": "The speaker receives the charger temporarily, so the speaker borrows it. A means give something temporarily to someone else. C means have a debt and does not describe taking an item temporarily."
+            },
+            {
+                "question": "Could you ___ me your charger until tomorrow?",
+                "options": [
+                    "borrow",
+                    "lend",
+                    "owe"
+                ],
+                "answer": 1,
+                "explanation": "The listener is being asked to give the charger temporarily. A means receive something temporarily. C means be in debt and is unrelated to the request."
+            },
+            {
+                "question": "The new rule will ___ everyone in the office.",
+                "options": [
+                    "affect",
+                    "effect",
+                    "effort"
+                ],
+                "answer": 0,
+                "explanation": "“Affect” is the verb meaning influence. B is usually a noun meaning result, so “will effect everyone” is not the intended construction. C means an attempt or energy, not influence."
+            },
+            {
+                "question": "The medicine had a positive ___ on her sleep.",
+                "options": [
+                    "affect",
+                    "effect",
+                    "effort"
+                ],
+                "answer": 1,
+                "explanation": "“Effect” is the noun meaning result. A is usually a verb, and “a positive affect” does not fit this meaning. C means an attempt or energy, not a result."
+            },
+            {
+                "question": "We arrived ___ the airport just before noon.",
+                "options": [
+                    "to",
+                    "at",
+                    "in"
+                ],
+                "answer": 1,
+                "explanation": "“Arrive at” is used with a specific place such as an airport. A is not used after “arrive” in this construction. C is more typical with cities or countries, not this specific destination."
+            }
+        ],
+        "id": "topic-5",
+        "title": "Common Confusing Word Pairs",
+        "subtitle": "Choose the right word in context"
+    },
+    {
+        "bankTitle": "QUESTION TAGS",
+        "questions": [
+            {
+                "question": "You like coffee, ___?",
+                "options": [
+                    "do you",
+                    "don’t you",
+                    "aren’t you"
+                ],
+                "answer": 1,
+                "explanation": "A repeats the positive polarity instead of using the usual negative tag after a positive statement. C uses “be,” but the statement’s main verb is “like,” so use “do.”"
+            },
+            {
+                "question": "She isn’t coming tonight, ___?",
+                "options": [
+                    "is she",
+                    "isn’t she",
+                    "does she"
+                ],
+                "answer": 0,
+                "explanation": "B repeats the negative polarity; a negative statement normally takes a positive tag. C uses “does” instead of the auxiliary “is” in the statement."
+            },
+            {
+                "question": "They have finished the project, ___?",
+                "options": [
+                    "haven’t they",
+                    "didn’t they",
+                    "have they"
+                ],
+                "answer": 0,
+                "explanation": "B uses past simple “did” instead of matching the present perfect auxiliary “have.” C repeats the positive polarity rather than switching to a negative tag."
+            },
+            {
+                "question": "Mark can swim, ___?",
+                "options": [
+                    "doesn’t he",
+                    "can’t he",
+                    "can he"
+                ],
+                "answer": 1,
+                "explanation": "A uses “does” instead of the modal “can.” C repeats the positive polarity; a positive statement normally takes a negative tag."
+            },
+            {
+                "question": "We should leave soon, ___?",
+                "options": [
+                    "shouldn’t we",
+                    "don’t we",
+                    "should we"
+                ],
+                "answer": 0,
+                "explanation": "B uses “do” instead of matching the modal “should.” C repeats the positive polarity instead of using the usual negative tag."
+            },
+            {
+                "question": "Your parents live nearby, ___?",
+                "options": [
+                    "do they",
+                    "don’t they",
+                    "aren’t they"
+                ],
+                "answer": 1,
+                "explanation": "A uses a positive tag after a positive statement. C uses “be,” but the main verb is “live”; use “do.”"
+            },
+            {
+                "question": "I’m late, ___?",
+                "options": [
+                    "am I",
+                    "aren’t I",
+                    "don’t I"
+                ],
+                "answer": 1,
+                "explanation": "A repeats the positive polarity, while this special tag conventionally uses “aren’t I?” after “I am.” C uses the wrong auxiliary because the statement uses “am.”"
+            },
+            {
+                "question": "Let’s take a break, ___?",
+                "options": [
+                    "will we",
+                    "shall we",
+                    "do we"
+                ],
+                "answer": 1,
+                "explanation": "“Let’s” suggestions conventionally take “shall we?” A does not use the usual tag for a “let’s” suggestion. C uses “do” rather than the conventional tag."
+            },
+            {
+                "question": "Nobody called while I was out, ___?",
+                "options": [
+                    "did they",
+                    "didn’t they",
+                    "was it"
+                ],
+                "answer": 0,
+                "explanation": "“Nobody” makes the statement negative in meaning, so the tag is positive. B is negative and does not match the polarity. C uses the wrong auxiliary and pronoun; “nobody” is referred to as “they” in the tag."
+            },
+            {
+                "question": "There are two tickets left, ___?",
+                "options": [
+                    "aren’t there",
+                    "are there",
+                    "isn’t it"
+                ],
+                "answer": 0,
+                "explanation": "A positive statement takes a negative tag and keeps the “there” construction. B is positive instead of negative. C uses the wrong pronoun and singular “is” for plural “two tickets.”"
+            }
+        ],
+        "id": "topic-6",
+        "title": "Question Tags",
+        "subtitle": "Complete statements with the right tag"
+    }
+];
+
+    let user = {
+        name: "Learner",
+        avatar: ""
+    };
+    const topicSessions = new Map();
+    let activeTopicId = null;
+    const ranks = [
+        { title: 'Grammar Seedling', symbol: '🌱' },
+        { title: 'Grammar Apprentice', symbol: '📘' },
+        { title: 'Grammar Explorer', symbol: '🧭' },
+        { title: 'Wordsmith', symbol: '✍️' },
+        { title: 'Sentence Builder', symbol: '🧩' },
+        { title: 'Grammar Guardian', symbol: '🛡️' },
+        { title: 'Syntax Star', symbol: '⭐' },
+        { title: 'Language Champion', symbol: '🏆' },
+        { title: 'Grammar Master', symbol: '👑' },
+        { title: 'Grammar Legend', symbol: '💎' }
+    ];
+    const dictionaryAccents = [
+        { flag: '🇺🇸', label: 'US English', locale: 'en-US' },
+        { flag: '🇬🇧', label: 'British English', locale: 'en-GB' },
+        { flag: '🇫🇷', label: 'French', locale: 'fr-FR' },
+        { flag: '🇩🇪', label: 'German', locale: 'de-DE' },
+        { flag: '🇮🇹', label: 'Italian', locale: 'it-IT' },
+        { flag: '🇨🇳', label: 'Chinese / Mandarin', locale: 'zh-CN' },
+        { flag: '🇯🇵', label: 'Japanese', locale: 'ja-JP' },
+        { flag: '🇷🇺', label: 'Russian', locale: 'ru-RU' }
+    ];
+    let dictionaryRequestController = null;
+    let dictionaryAudio = null;
+    let dictionarySequenceTimer = null;
+    let dictionarySequenceId = 0;
+    let currentDictionaryWord = '';
+    let isPlayingAllAccents = false;
+
+    document.getElementById('welcome-bird-button').addEventListener('click', event => {
+        const button = event.currentTarget;
+        button.classList.remove('flap');
+        void button.offsetWidth;
+        button.classList.add('flap');
+        button.addEventListener('animationend', () => button.classList.remove('flap'), { once: true });
+    });
+
+    document.getElementById('profile-photo-input').addEventListener('change', handleProfilePhoto);
+
+    function updateProfileAvatars() {
+        document.querySelectorAll('.profile-avatar-image').forEach(image => {
+            image.hidden = !user.avatar;
+            if (user.avatar) image.src = user.avatar;
+        });
+    }
+
+    function handleProfilePhoto(event) {
+        const file = event.target.files && event.target.files[0];
+        const status = document.getElementById('profile-photo-status');
+        if (!file) return;
+        if (!file.type.startsWith('image/')) {
+            status.textContent = 'Choose an image file to use as your profile photo.';
+            event.target.value = '';
+            return;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+            status.textContent = 'That image is larger than 10 MB. Choose a smaller file.';
+            event.target.value = '';
+            return;
+        }
+        const reader = new FileReader();
+        reader.onerror = () => {
+            status.textContent = 'The selected image could not be read. Please try another file.';
+        };
+        reader.onload = () => {
+            const image = new Image();
+            image.onerror = () => {
+                status.textContent = 'The selected image could not be opened. Please try another file.';
+            };
+            image.onload = () => {
+                const canvas = document.createElement('canvas');
+                const scale = Math.min(1, 256 / Math.max(image.naturalWidth, image.naturalHeight));
+                canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+                canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+                const context = canvas.getContext('2d');
+                if (!context) {
+                    status.textContent = 'Your browser could not prepare that image.';
+                    return;
+                }
+                context.drawImage(image, 0, 0, canvas.width, canvas.height);
+                user.avatar = canvas.toDataURL('image/jpeg', 0.82);
+                updateProfileAvatars();
+                status.textContent = 'Profile photo updated.';
+            };
+            image.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function shuffleQuestions(questions) {
+        const shuffled = questions.slice();
+        for (let index = shuffled.length - 1; index > 0; index--) {
+            const swapIndex = Math.floor(Math.random() * (index + 1));
+            [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+        }
+        return shuffled;
+    }
+
+    function getTopicSession(topic) {
+        let session = topicSessions.get(topic.id);
+        if (!session) {
+            const questions = topic.questions.map((question, bankIndex) => ({ ...question, bankIndex }));
+            session = { questions: shuffleQuestions(questions), currentIndex: 0, solvedQuestionIndexes: new Set() };
+            topicSessions.set(topic.id, session);
+        }
+        return session;
+    }
+
+    function getTopicSolvedCount(topicId) {
+        const session = topicSessions.get(topicId);
+        return session ? session.solvedQuestionIndexes.size : 0;
+    }
+
+    function getTotalSolvedQuestions() {
+        return grammarTopics.reduce((total, topic) => total + getTopicSolvedCount(topic.id), 0);
+    }
+
+    function getCompletedTopicCount() {
+        return grammarTopics.filter(topic => getTopicSolvedCount(topic.id) === topic.questions.length).length;
+    }
+
+    function getCurrentRank() {
+        const rankIndex = Math.min(ranks.length - 1, Math.floor(getTotalSolvedQuestions() / 6));
+        return { rank: ranks[rankIndex], rankIndex };
+    }
+
+    function updateRankDisplays() {
+        const total = getTotalSolvedQuestions();
+        const current = getCurrentRank();
+        const nextRankText = current.rankIndex === ranks.length - 1
+            ? 'Highest rank achieved.'
+            : (total % 6) + ' of 6 questions solved toward the next rank.';
+        document.getElementById('home-rank-symbol').textContent = current.rank.symbol;
+        document.getElementById('home-rank-title').textContent = current.rank.title;
+        document.getElementById('home-solved-count').textContent = total;
+        document.getElementById('home-topics-count').textContent = getCompletedTopicCount() + '/6';
+        document.getElementById('progress-rank-symbol').textContent = current.rank.symbol;
+        document.getElementById('progress-rank-title').textContent = current.rank.title;
+        document.getElementById('progress-rank-next').textContent = nextRankText;
+        document.getElementById('profile-rank-symbol').textContent = current.rank.symbol;
+        document.getElementById('profile-rank-title').textContent = current.rank.title;
+        document.getElementById('profile-rank-count').textContent = total + ' of 60 questions solved';
+        document.getElementById('profile-rank-next').textContent = nextRankText;
+    }
+
+    function renderTopicProgressList(container) {
+        container.replaceChildren();
+        grammarTopics.forEach(topic => {
+            const solved = getTopicSolvedCount(topic.id);
+            const item = document.createElement('div');
+            item.className = 'topic-progress-item';
+            const heading = document.createElement('div');
+            heading.className = 'topic-progress-heading';
+            const title = document.createElement('span');
+            title.textContent = topic.title;
+            const count = document.createElement('span');
+            count.textContent = solved + '/10';
+            heading.append(title, count);
+            const track = document.createElement('div');
+            track.className = 'topic-progress-track';
+            track.setAttribute('role', 'progressbar');
+            track.setAttribute('aria-valuemin', '0');
+            track.setAttribute('aria-valuemax', '10');
+            track.setAttribute('aria-valuenow', String(solved));
+            track.setAttribute('aria-label', topic.title + ': ' + solved + ' of 10 questions solved');
+            const fill = document.createElement('div');
+            fill.className = 'topic-progress-fill';
+            fill.style.width = (solved * 10) + '%';
+            track.append(fill);
+            item.append(heading, track);
+            container.append(item);
+        });
+    }
+
+    function renderTopics() {
+        const container = document.getElementById('topic-list');
+        container.replaceChildren();
+        grammarTopics.forEach(topic => {
+            const solved = getTopicSolvedCount(topic.id);
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'topic-option';
+            const title = document.createElement('strong');
+            title.textContent = topic.title;
+            const subtitle = document.createElement('span');
+            subtitle.textContent = topic.subtitle;
+            const status = document.createElement('span');
+            status.textContent = solved === 10 ? 'Complete - 10/10 solved' : (solved ? 'Continue - ' : 'Start quiz - ') + solved + '/10 solved';
+            button.append(title, subtitle, status);
+            button.addEventListener('click', () => startTopicQuiz(topic.id));
+            container.append(button);
+        });
+    }
+
+    function startTopicQuiz(topicId) {
+        const topic = grammarTopics.find(item => item.id === topicId);
+        if (!topic) throw new Error('The selected grammar topic could not be found.');
+        activeTopicId = topic.id;
+        const session = getTopicSession(topic);
+        if (session.currentIndex >= session.questions.length) {
+            finishTopicQuiz();
+            return;
+        }
+        renderQuizQuestion();
+        goTo('p-quiz');
+    }
+
+    function renderQuizQuestion() {
+        const topic = grammarTopics.find(item => item.id === activeTopicId);
+        if (!topic) throw new Error('The selected grammar topic could not be found.');
+        const session = getTopicSession(topic);
+        const question = session.questions[session.currentIndex];
+        if (!question) throw new Error('The next quiz question could not be found.');
+        const isSolved = session.solvedQuestionIndexes.has(question.bankIndex);
+        document.getElementById('quiz-topic-title').textContent = topic.title;
+        document.getElementById('quiz-question-title').textContent = question.question;
+        document.getElementById('quiz-question-progress').textContent = 'Question ' + (session.currentIndex + 1) + ' of 10 - ' + session.solvedQuestionIndexes.size + ' solved in this topic';
+        const feedback = document.getElementById('quiz-feedback');
+        feedback.textContent = isSolved ? 'Correct! ' + question.explanation : '';
+        feedback.style.color = isSolved ? '#047857' : '';
+        const nextButton = document.getElementById('next-question');
+        nextButton.hidden = !isSolved;
+        nextButton.textContent = session.currentIndex === session.questions.length - 1 ? 'See Results' : 'Next Question';
+        const optionsContainer = document.getElementById('quiz-options');
+        optionsContainer.replaceChildren();
+        question.options.forEach((option, optionIndex) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'option-item';
+            button.textContent = option;
+            button.disabled = isSolved;
+            if (isSolved && optionIndex === question.answer) button.classList.add('correct');
+            button.addEventListener('click', () => answerQuiz(optionIndex, button));
+            optionsContainer.append(button);
+        });
+    }
+
+    function answerQuiz(optionIndex, selectedButton) {
+        const topic = grammarTopics.find(item => item.id === activeTopicId);
+        if (!topic) throw new Error('The selected grammar topic could not be found.');
+        const session = getTopicSession(topic);
+        const question = session.questions[session.currentIndex];
+        if (!question || session.solvedQuestionIndexes.has(question.bankIndex)) return;
+        if (optionIndex < 0 || optionIndex >= question.options.length) return;
+        const options = document.querySelectorAll('#quiz-options .option-item');
+        options.forEach(button => button.classList.remove('selected', 'correct', 'incorrect'));
+        selectedButton.classList.add('selected');
+        const feedback = document.getElementById('quiz-feedback');
+        if (optionIndex !== question.answer) {
+            selectedButton.classList.add('incorrect');
+            feedback.textContent = 'Not quite. Choose the correct answer to continue.';
+            feedback.style.color = '#B91C1C';
+            return;
+        }
+        session.solvedQuestionIndexes.add(question.bankIndex);
+        options.forEach((button, index) => {
+            button.disabled = true;
+            if (index === question.answer) button.classList.add('correct');
+        });
+        document.getElementById('quiz-question-progress').textContent = 'Question ' + (session.currentIndex + 1) + ' of 10 - ' + session.solvedQuestionIndexes.size + ' solved in this topic';
+        feedback.textContent = 'Correct! ' + question.explanation;
+        feedback.style.color = '#047857';
+        document.getElementById('next-question').hidden = false;
+    }
+
+    function nextQuizQuestion() {
+        const topic = grammarTopics.find(item => item.id === activeTopicId);
+        if (!topic) throw new Error('The selected grammar topic could not be found.');
+        const session = getTopicSession(topic);
+        const question = session.questions[session.currentIndex];
+        if (!question || !session.solvedQuestionIndexes.has(question.bankIndex)) return;
+        session.currentIndex++;
+        if (session.currentIndex === session.questions.length) {
+            finishTopicQuiz();
+            return;
+        }
+        renderQuizQuestion();
+    }
+
+    function finishTopicQuiz() {
+        const topic = grammarTopics.find(item => item.id === activeTopicId);
+        if (!topic) throw new Error('The selected grammar topic could not be found.');
+        document.getElementById('result-topic-title').textContent = topic.title;
+        document.getElementById('result-correct').textContent = getTopicSolvedCount(topic.id);
+        document.getElementById('result-summary').textContent = 'You have solved all 10 questions in this topic. Your progress is saved until you refresh the page.';
+        goTo('p-quiz-results');
+    }
+
+    function goTo(pageId) {
+        const page = document.getElementById(pageId);
+        if (!page) throw new Error('Unknown page: ' + pageId);
+        if (pageId !== 'p-dictionary' && document.getElementById('p-dictionary').classList.contains('active')) {
+            stopDictionaryPlayback();
+            if (dictionaryRequestController) {
+                dictionaryRequestController.abort();
+                dictionaryRequestController = null;
+                document.getElementById('dictionary-status').textContent = 'Lookup cancelled.';
+            }
+        }
+        const navItems = document.querySelectorAll('.nav-item');
+        const previousNavIndex = Array.from(navItems).findIndex(item => item.classList.contains('active'));
+        const navIndex = { 'p-home': 0, 'p-progress': 1, 'p-profile': 2, 'p-about': 3 }[pageId];
+        document.querySelectorAll('.page').forEach(item => item.classList.remove('active'));
+        page.classList.add('active');
+        const navVisible = ['p-home', 'p-progress', 'p-profile', 'p-about'].includes(pageId);
+        document.querySelector('.bottom-nav').classList.toggle('visible', navVisible);
+        navItems.forEach(item => item.classList.remove('active'));
+        if (navIndex !== undefined) {
+            navItems[navIndex].classList.add('active');
+            moveNavIndicator(navIndex, previousNavIndex >= 0 && previousNavIndex !== navIndex, previousNavIndex);
+        }
+        if (pageId === 'p-home') renderHome();
+        if (pageId === 'p-topics') renderTopics();
+        if (pageId === 'p-progress') renderProgress();
+        if (pageId === 'p-profile') renderProfile();
+        document.getElementById('app').scrollTop = 0;
+        window.scrollTo(0, 0);
+    }
+
+    function moveNavIndicator(targetIndex, animate, startNavIndex) {
+        const nav = document.querySelector('.bottom-nav');
+        const indicator = nav.querySelector('.nav-indicator');
+        const navItems = nav.querySelectorAll('.nav-item');
+        const target = navItems[targetIndex];
+        if (!nav.classList.contains('visible') || !target) return;
+
+        const navRect = nav.getBoundingClientRect();
+        const targetRect = target.getBoundingClientRect();
+        const endX = targetRect.left - navRect.left;
+        const endY = targetRect.top - navRect.top;
+        const animations = indicator.getAnimations();
+
+        if (!animate || !indicator.dataset.positioned) {
+            animations.forEach(animation => animation.cancel());
+            indicator.style.width = `${targetRect.width}px`;
+            indicator.style.height = `${targetRect.height}px`;
+            indicator.style.transform = `translate3d(${endX}px, ${endY}px, 0)`;
+            indicator.dataset.positioned = 'true';
+            return;
+        }
+
+        const currentRect = indicator.getBoundingClientRect();
+        const startX = currentRect.left - navRect.left;
+        const startY = currentRect.top - navRect.top;
+        const startWidth = currentRect.width;
+        const startHeight = currentRect.height;
+        animations.forEach(animation => animation.cancel());
+
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            indicator.style.width = `${targetRect.width}px`;
+            indicator.style.height = `${targetRect.height}px`;
+            indicator.style.transform = `translate3d(${endX}px, ${endY}px, 0)`;
+            return;
+        }
+
+        const startItem = navItems[startNavIndex];
+        const startItemRect = startItem && startItem.getBoundingClientRect();
+        const indicatorIsAtStart = startItemRect
+            && Math.abs((currentRect.left + currentRect.right) / 2 - (startItemRect.left + startItemRect.right) / 2) < 1;
+        if (indicatorIsAtStart && Math.abs(targetIndex - startNavIndex) > 1) {
+            const direction = Math.sign(targetIndex - startNavIndex);
+            const waypoints = [];
+            for (let index = startNavIndex + direction; index !== targetIndex + direction; index += direction) {
+                const itemRect = navItems[index].getBoundingClientRect();
+                waypoints.push({
+                    x: itemRect.left - navRect.left,
+                    y: itemRect.top - navRect.top,
+                    width: itemRect.width,
+                    height: itemRect.height
+                });
+            }
+
+            const frames = [{
+                transform: `translate3d(${startX}px, ${startY}px, 0) scale(1)`,
+                width: `${startWidth}px`,
+                height: `${startHeight}px`,
+                offset: 0
+            }];
+            waypoints.forEach((point, index) => {
+                const arrival = (index + 1) / waypoints.length;
+                const shrink = arrival - 0.5 / waypoints.length;
+                frames.push({
+                    transform: `translate3d(${point.x}px, ${point.y}px, 0) scale(0.5)`,
+                    width: `${point.width}px`,
+                    height: `${point.height}px`,
+                    offset: shrink,
+                    easing: 'cubic-bezier(0.65, 0, 0.35, 1)'
+                });
+                frames.push({
+                    transform: `translate3d(${point.x}px, ${point.y}px, 0) scale(1)`,
+                    width: `${point.width}px`,
+                    height: `${point.height}px`,
+                    offset: arrival,
+                    easing: 'cubic-bezier(0.65, 0, 0.35, 1)'
+                });
+            });
+
+            indicator.style.width = `${targetRect.width}px`;
+            indicator.style.height = `${targetRect.height}px`;
+            indicator.style.transform = `translate3d(${endX}px, ${endY}px, 0)`;
+            indicator.dataset.positioned = 'true';
+            const animation = indicator.animate(frames, { duration: 560, easing: 'linear' });
+            animation.onfinish = () => {
+                animation.cancel();
+            };
+            return;
+        }
+
+        const middleWidth = (startWidth + targetRect.width) / 2;
+        const middleX = (startX + endX) / 2;
+        indicator.style.width = `${targetRect.width}px`;
+        indicator.style.height = `${targetRect.height}px`;
+        indicator.style.transform = `translate3d(${endX}px, ${endY}px, 0)`;
+        indicator.dataset.positioned = 'true';
+        const animation = indicator.animate([
+            {
+                transform: `translate3d(${startX}px, ${startY}px, 0) scale(1)`,
+                width: `${startWidth}px`,
+                height: `${startHeight}px`,
+                offset: 0
+            },
+            {
+                transform: `translate3d(${middleX}px, ${(startY + endY) / 2}px, 0) scale(0.5)`,
+                width: `${middleWidth}px`,
+                height: `${(startHeight + targetRect.height) / 2}px`,
+                offset: 0.5
+            },
+            {
+                transform: `translate3d(${endX}px, ${endY}px, 0) scale(1)`,
+                width: `${targetRect.width}px`,
+                height: `${targetRect.height}px`,
+                offset: 1
+            }
+        ], { duration: 560, easing: 'cubic-bezier(0.65, 0, 0.35, 1)' });
+
+        animation.onfinish = () => {
+            animation.cancel();
+        };
+    }
+
+    window.addEventListener('resize', () => {
+        const activeNavIndex = Array.from(document.querySelectorAll('.nav-item')).findIndex(item => item.classList.contains('active'));
+        if (activeNavIndex >= 0) moveNavIndicator(activeNavIndex, false);
+    });
+
+    function completeSetup() {
+        const nameInput = document.getElementById('username-input').value;
+        if(nameInput.trim()) user.name = nameInput.trim();
+        document.getElementById('display-name').innerText = user.name;
+        updateGreeting();
+        goTo('p-home');
+    }
+
+    function updateGreeting() {
+        const hour = new Date().getHours();
+        let greeting = "Good morning";
+        if (hour >= 12 && hour < 17) greeting = "Good afternoon";
+        else if (hour >= 17) greeting = "Good evening";
+        document.getElementById('greeting-text').innerText = greeting + ",";
+    }
+
+    function renderHome() {
+        updateRankDisplays();
+        updateProfileAvatars();
+    }
+
+    function renderProgress() {
+        document.getElementById('prog-solved').textContent = getTotalSolvedQuestions();
+        document.getElementById('prog-topics').textContent = getCompletedTopicCount() + '/6';
+        updateRankDisplays();
+        renderTopicProgressList(document.getElementById('progress-topic-list'));
+    }
+
+    function renderProfile() {
+        updateProfileAvatars();
+        const total = getTotalSolvedQuestions();
+        const current = getCurrentRank();
+        document.getElementById('profile-summary').textContent = user.name + ' - ' + total + ' of 60 questions solved - ' + current.rank.title;
+        updateRankDisplays();
+        renderTopicProgressList(document.getElementById('profile-topic-chart'));
+    }
+
+    function renderAccentButtons() {
+        const grid = document.getElementById('dictionary-accent-grid');
+        dictionaryAccents.forEach(accent => {
+            const option = document.createElement('div');
+            option.className = 'accent-option';
+
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'btn btn-secondary accent-button';
+            button.disabled = true;
+            button.dataset.locale = accent.locale;
+
+            const flag = document.createElement('span');
+            flag.className = 'accent-flag';
+            flag.setAttribute('aria-hidden', 'true');
+            flag.textContent = accent.flag;
+            button.append(flag, document.createTextNode(accent.label));
+            button.addEventListener('click', () => speakDictionaryAccent(accent));
+
+            const tooltip = document.createElement('span');
+            tooltip.className = 'voice-tooltip';
+            tooltip.setAttribute('role', 'tooltip');
+            option.append(button, tooltip);
+            grid.append(option);
+        });
+    }
+
+    function getAccentVoice(accent, voices) {
+        const locale = accent.locale.toLowerCase();
+        const exactVoice = voices.find(voice => (voice.lang || '').toLowerCase() === locale);
+        if (exactVoice) return exactVoice;
+
+        if (locale.startsWith('en-')) {
+            const preferredFallbacks = locale === 'en-gb' ? ['en-us'] : ['en-gb'];
+            for (const fallbackLocale of preferredFallbacks) {
+                const fallbackVoice = voices.find(voice => (voice.lang || '').toLowerCase() === fallbackLocale);
+                if (fallbackVoice) return fallbackVoice;
+            }
+            return voices.find(voice => (voice.lang || '').toLowerCase().startsWith('en-'))
+                || voices.find(voice => (voice.lang || '').toLowerCase() === 'en')
+                || null;
+        }
+
+        const language = locale.split('-')[0];
+        return voices.find(voice => (voice.lang || '').toLowerCase().startsWith(`${language}-`))
+            || voices.find(voice => (voice.lang || '').toLowerCase() === language)
+            || null;
+    }
+
+    function updateAccentAvailability() {
+        const speechSupported = 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined';
+        const voices = speechSupported ? window.speechSynthesis.getVoices() : [];
+        let availableVoiceCount = 0;
+
+        document.querySelectorAll('.accent-button').forEach(button => {
+            const accent = dictionaryAccents.find(item => item.locale === button.dataset.locale);
+            const voice = accent ? getAccentVoice(accent, voices) : null;
+            if (voice) availableVoiceCount++;
+
+            button.disabled = !currentDictionaryWord || !voice || !speechSupported;
+            const tooltip = button.parentElement.querySelector('.voice-tooltip');
+            if (!speechSupported) {
+                tooltip.textContent = 'Speech playback is not supported in this browser.';
+                button.title = tooltip.textContent;
+            } else if (!voice) {
+                tooltip.textContent = 'Voice not installed on this device';
+                button.title = tooltip.textContent;
+            } else {
+                tooltip.textContent = '';
+                button.title = `Speak using ${voice.name || voice.lang}`;
+                button.setAttribute('aria-label', `${accent.label}, using ${voice.lang} voice`);
+            }
+        });
+
+        const playAllButton = document.getElementById('dictionary-play-all');
+        playAllButton.disabled = !currentDictionaryWord || availableVoiceCount === 0;
+        if (!speechSupported && currentDictionaryWord) {
+            document.getElementById('dictionary-accent-status').textContent =
+                'Speech playback is not supported in this browser.';
+        } else if (currentDictionaryWord && availableVoiceCount === 0) {
+            document.getElementById('dictionary-accent-status').textContent =
+                'No compatible voices are installed on this device.';
+        } else {
+            document.getElementById('dictionary-accent-status').textContent = '';
+        }
+    }
+
+    function stopDictionaryPlayback() {
+        dictionarySequenceId++;
+        isPlayingAllAccents = false;
+        if (dictionarySequenceTimer !== null) {
+            clearTimeout(dictionarySequenceTimer);
+            dictionarySequenceTimer = null;
+        }
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        if (dictionaryAudio) {
+            dictionaryAudio.pause();
+            dictionaryAudio = null;
+        }
+
+        const playAllButton = document.getElementById('dictionary-play-all');
+        if (playAllButton) playAllButton.textContent = 'Play All Accents';
+    }
+
+    function speakDictionaryAccent(accent) {
+        const voices = window.speechSynthesis.getVoices();
+        const voice = getAccentVoice(accent, voices);
+        if (!currentDictionaryWord || !voice) {
+            updateAccentAvailability();
+            return;
+        }
+
+        stopDictionaryPlayback();
+        const sequenceId = dictionarySequenceId;
+        const utterance = new SpeechSynthesisUtterance(currentDictionaryWord);
+        utterance.voice = voice;
+        utterance.lang = voice.lang || accent.locale;
+        utterance.volume = 1;
+        utterance.rate = 0.9;
+        utterance.onend = () => {
+            if (sequenceId === dictionarySequenceId) {
+                document.getElementById('dictionary-accent-status').textContent =
+                    `Finished playing ${accent.label}.`;
+            }
+        };
+        utterance.onerror = event => {
+            if (sequenceId === dictionarySequenceId && event.error !== 'canceled' && event.error !== 'interrupted') {
+                document.getElementById('dictionary-accent-status').textContent =
+                    `Could not play ${accent.label}: ${event.error}.`;
+            }
+        };
+        document.getElementById('dictionary-accent-status').textContent =
+            `Speaking with ${voice.lang} voice${voice.name ? ` (${voice.name})` : ''}.`;
+        window.speechSynthesis.resume();
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function playAllDictionaryAccents() {
+        if (!currentDictionaryWord) return;
+
+        const voices = window.speechSynthesis.getVoices();
+        const availableAccents = dictionaryAccents
+            .map(accent => ({ accent, voice: getAccentVoice(accent, voices) }))
+            .filter(item => item.voice);
+        if (availableAccents.length === 0) {
+            updateAccentAvailability();
+            return;
+        }
+
+        stopDictionaryPlayback();
+        isPlayingAllAccents = true;
+        const sequenceId = dictionarySequenceId;
+        const word = currentDictionaryWord;
+        const playAllButton = document.getElementById('dictionary-play-all');
+        playAllButton.textContent = 'Stop Accent Playback';
+        let index = 0;
+
+        const speakNext = () => {
+            if (sequenceId !== dictionarySequenceId) return;
+            if (index >= availableAccents.length) {
+                isPlayingAllAccents = false;
+                playAllButton.textContent = 'Play All Accents';
+                document.getElementById('dictionary-accent-status').textContent = 'Finished playing all available accents.';
+                return;
+            }
+
+            const { accent, voice } = availableAccents[index++];
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.voice = voice;
+            utterance.lang = voice.lang || accent.locale;
+            utterance.volume = 1;
+            utterance.rate = 0.9;
+            document.getElementById('dictionary-accent-status').textContent =
+                `Playing ${accent.label} (${voice.lang})...`;
+            utterance.onend = () => {
+                if (sequenceId !== dictionarySequenceId) return;
+                dictionarySequenceTimer = setTimeout(speakNext, 1500);
+            };
+            utterance.onerror = event => {
+                if (sequenceId !== dictionarySequenceId || event.error === 'canceled' || event.error === 'interrupted') return;
+                document.getElementById('dictionary-accent-status').textContent =
+                    `Could not play ${accent.label}: ${event.error}.`;
+                dictionarySequenceTimer = setTimeout(speakNext, 1500);
+            };
+            window.speechSynthesis.resume();
+            window.speechSynthesis.speak(utterance);
+        };
+
+        speakNext();
+    }
+
+    function playOriginalDictionaryAudio() {
+        const button = document.getElementById('dictionary-original-audio');
+        const audioUrl = button.dataset.audioUrl;
+        if (!audioUrl) return;
+
+        stopDictionaryPlayback();
+        const audio = new Audio(audioUrl);
+        audio.volume = 1;
+        dictionaryAudio = audio;
+        audio.addEventListener('error', () => {
+            if (dictionaryAudio === audio) {
+                document.getElementById('dictionary-status').textContent =
+                    'The original pronunciation audio could not be played.';
+                dictionaryAudio = null;
+            }
+        });
+        const playRequest = audio.play();
+        if (playRequest && typeof playRequest.catch === 'function') {
+            playRequest.catch(error => {
+                if (dictionaryAudio === audio && error.name !== 'AbortError') {
+                    document.getElementById('dictionary-status').textContent =
+                        `The original pronunciation audio could not be played: ${error.message}`;
+                    dictionaryAudio = null;
+                }
+            });
+        }
+    }
+
+    async function searchDictionary() {
+        const input = document.getElementById('dictionary-word-input');
+        const status = document.getElementById('dictionary-status');
+        const results = document.getElementById('dictionary-results');
+        const word = input.value.trim();
+        if (!word) {
+            status.textContent = 'Enter a word to search.';
+            input.focus();
+            return;
+        }
+
+        stopDictionaryPlayback();
+        if (dictionaryRequestController) dictionaryRequestController.abort();
+        dictionaryRequestController = new AbortController();
+        const requestController = dictionaryRequestController;
+        currentDictionaryWord = '';
+        results.hidden = true;
+        document.getElementById('dictionary-original-audio').hidden = true;
+        document.getElementById('dictionary-original-audio').dataset.audioUrl = '';
+        document.getElementById('dictionary-accent-status').textContent = '';
+        updateAccentAvailability();
+        status.textContent = `Searching for "${word}"...`;
+
+        try {
+            const response = await fetch(
+                `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`,
+                { signal: requestController.signal }
+            );
+            if (response.status === 404) {
+                status.textContent = `No definition found for "${word}". Check the spelling and try again.`;
+                return;
+            }
+            if (!response.ok) {
+                throw new Error(`The dictionary service returned error ${response.status}. Please try again.`);
+            }
+
+            let entries;
+            try {
+                entries = await response.json();
+            } catch {
+                throw new Error('The dictionary service returned invalid data.');
+            }
+            if (!Array.isArray(entries) || entries.length === 0 || !entries[0]) {
+                throw new Error('The dictionary service returned no usable entry.');
+            }
+
+            const entry = entries[0];
+            const phonetics = entries.flatMap(item => Array.isArray(item.phonetics) ? item.phonetics : []);
+            const phonetic = entries.map(item => item.phonetic).find(Boolean)
+                || (phonetics.find(item => item && item.text) || {}).text;
+            const meaningGroups = new Map();
+            entries.forEach(dictionaryEntry => {
+                (Array.isArray(dictionaryEntry.meanings) ? dictionaryEntry.meanings : []).forEach(meaning => {
+                    if (!meaning || !Array.isArray(meaning.definitions)) return;
+                    const partOfSpeech = meaning.partOfSpeech || 'Meaning';
+                    if (!meaningGroups.has(partOfSpeech)) meaningGroups.set(partOfSpeech, []);
+                    const definitions = meaningGroups.get(partOfSpeech);
+                    meaning.definitions.forEach(item => {
+                        if (!item || !item.definition || definitions.some(existing => existing.definition === item.definition)) return;
+                        definitions.push(item);
+                    });
+                });
+            });
+
+            currentDictionaryWord = entry.word || word;
+            document.getElementById('dictionary-result-word').textContent = currentDictionaryWord;
+            document.getElementById('dictionary-result-phonetic').textContent =
+                phonetic ? `IPA: ${phonetic}` : 'IPA pronunciation not provided.';
+            const meaningsContainer = document.getElementById('dictionary-result-meanings');
+            meaningsContainer.replaceChildren();
+            meaningGroups.forEach((definitions, partOfSpeech) => {
+                if (!definitions.length) return;
+                const section = document.createElement('section');
+                section.className = 'dictionary-meaning';
+                const heading = document.createElement('h4');
+                heading.textContent = partOfSpeech;
+                const list = document.createElement('ol');
+                definitions.forEach(item => {
+                    const definition = document.createElement('li');
+                    definition.append(document.createTextNode(item.definition));
+                    if (item.example) {
+                        const example = document.createElement('span');
+                        example.className = 'dictionary-example';
+                        example.textContent = `Example: “${item.example}”`;
+                        definition.append(example);
+                    }
+                    list.append(definition);
+                });
+                section.append(heading, list);
+                meaningsContainer.append(section);
+            });
+            if (!meaningsContainer.childElementCount) {
+                const unavailable = document.createElement('p');
+                unavailable.textContent = 'No definitions were provided for this entry.';
+                meaningsContainer.append(unavailable);
+            }
+
+            const audioItem = phonetics.find(item => item && item.audio);
+            if (audioItem) {
+                const audioUrl = audioItem.audio.startsWith('//')
+                    ? `https:${audioItem.audio}`
+                    : new URL(audioItem.audio, 'https://api.dictionaryapi.dev').href;
+                const audioButton = document.getElementById('dictionary-original-audio');
+                audioButton.dataset.audioUrl = audioUrl;
+                audioButton.hidden = false;
+            }
+
+            results.hidden = false;
+            status.textContent = `Definition found for "${currentDictionaryWord}".`;
+            updateAccentAvailability();
+        } catch (error) {
+            if (error.name === 'AbortError') return;
+            status.textContent = `Dictionary lookup failed: ${error.message || 'An unexpected error occurred.'}`;
+        } finally {
+            if (dictionaryRequestController === requestController) dictionaryRequestController = null;
+        }
+    }
+
+    document.getElementById('dictionary-search-form').addEventListener('submit', event => {
+        event.preventDefault();
+        searchDictionary();
+    });
+    document.getElementById('dictionary-original-audio').addEventListener('click', playOriginalDictionaryAudio);
+    document.getElementById('dictionary-play-all').addEventListener('click', () => {
+        if (isPlayingAllAccents) {
+            stopDictionaryPlayback();
+            document.getElementById('dictionary-accent-status').textContent = 'Accent playback stopped.';
+        } else {
+            playAllDictionaryAccents();
+        }
+    });
+    renderAccentButtons();
+    updateAccentAvailability();
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.addEventListener('voiceschanged', updateAccentAvailability);
+    }
+    document.getElementById('display-name').textContent = user.name;
+    updateRankDisplays();
+    updateProfileAvatars();
+    updateGreeting();
+</script>
+</body>
+</html> 

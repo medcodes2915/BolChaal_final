@@ -1,0 +1,2785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bolchaal — Premium UI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>                                                                                                                                                                     
+        :root {
+            --bg-color: #F8FAF5;
+            --surface: rgba(255, 255, 255, 0.85);
+            --primary-text: #1A1D26;
+            --secondary-text: #6B7280;
+            --accent-start: #20497d;
+            --accent-end: #20497d;
+            --success: #10B981;
+            --radius-lg: 28px;
+            --radius-md: 20px;
+            --radius-sm: 12px;
+            --shadow-glass: 0 8px 32px 0 rgba(32, 73, 125, 0.07);
+            --shadow-float: 0 12px 28px -8px rgba(0, 0, 0, 0.32);
+            --font-main: 'Comfortaa', cursive;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: var(--font-main);
+            background-color: #F1F4EC;
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Center vertically on desktop */
+            min-height: 100vh;
+            color: var(--primary-text);
+            overflow-x: hidden;
+        }
+
+        /* Mobile Container - STRICT WIDTH CONTROL */
+        #app {
+            width: 100%;
+            max-width: 480px;
+            height: 100vh; /* Fixed height for mobile feel */
+            background: linear-gradient(180deg, #fffef8 0%, #f5f7ed 100%);
+            position: relative;
+            overflow-y: auto; /* Scroll inside the phone */
+            overflow-x: hidden;
+            box-shadow: 0 0 60px rgba(0,0,0,0.15);
+        }
+
+        /* Animated Background Blobs - CONTAINED */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            z-index: 0;
+            opacity: 0.6;
+            animation: float 10s infinite ease-in-out;
+            pointer-events: none;
+        }
+        .blob-1 { top: -50px; left: -50px; width: 300px; height: 300px; background: #b9d433; animation-delay: 0s; }
+        .blob-2 { bottom: 100px; right: -80px; width: 250px; height: 250px; background: #b9d433; animation-delay: 2s; opacity: 0.45; }
+        .blob-3 { top: 40%; left: 20%; width: 200px; height: 200px; background: #b9d433; animation-delay: 4s; opacity: 0.25; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(20px, -20px) scale(1.1); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        .page {
+            display: none;
+            padding: 28px;
+            padding-bottom: 120px; /* Extra space for nav */
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            min-height: 100%;
+        }
+        .page.active { display: block; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 { font-size: 36px; font-weight: 700; letter-spacing: -1px; margin-bottom: 12px; line-height: 1.2; background: linear-gradient(135deg, var(--primary-text) 0%, #4B5563 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h2 { font-size: 24px; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.3px; }
+        h3 { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
+        p { font-size: 15px; line-height: 1.6; color: var(--secondary-text); margin-bottom: 20px; }
+
+        .glass-card {
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 24px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-glass);
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            transition: transform 0.2s;
+        }
+        .glass-card:hover { transform: translateY(-2px); }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            font-size: 15px;
+            font-weight: 600;
+            font-family: var(--font-main);
+            cursor: pointer;
+            border: none;
+            margin-bottom: 12px;
+            transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.22s ease, background-color 0.22s ease, color 0.22s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-primary { 
+            background: linear-gradient(135deg, var(--accent-start), var(--accent-end)); 
+            color: white; 
+            box-shadow: var(--shadow-float);
+        }
+        .btn:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.035);
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.38);
+        }
+        .btn:focus-visible {
+            outline: 3px solid rgba(32, 73, 125, 0.35);
+            outline-offset: 3px;
+        }
+        .btn-primary:active { transform: translateY(-1px) scale(0.98); }
+        .btn-secondary { 
+            background: white; 
+            border: 1px solid rgba(0,0,0,0.05); 
+            color: var(--primary-text); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .btn-secondary:hover:not(:disabled) { color: var(--accent-start); border-color: rgba(32, 73, 125, 0.25); }
+        .btn-secondary:active { background: #F9FAFB; transform: translateY(-1px) scale(0.98); }
+
+        /* Video & Custom Caption UI */
+        .video-wrapper { margin-bottom: 24px; }
+        .video-container {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #111827;
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            overflow: hidden;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3);
+        }
+        .video-container video { width: 100%; height: 100%; display: block; }
+        
+        .caption-box {
+            background: linear-gradient(135deg, #1F2937 0%, #111827 100%);
+            border-radius: 0 0 var(--radius-md) var(--radius-md);
+            padding: 16px 20px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .caption-text { color: #F9FAFB; font-size: 14px; font-weight: 500; line-height: 1.4; }
+        .caption-text.empty { color: rgba(255,255,255,0.3); font-style: italic; font-size: 12px; }
+
+        .option-item {
+            background: white;
+            padding: 16px 20px;
+            border-radius: var(--radius-md);
+            margin-bottom: 12px;
+            border: 2px solid rgba(0,0,0,0.04);
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .option-item:hover { border-color: var(--accent-start); transform: translateX(4px); }
+        .option-item.selected { border-color: var(--accent-start); background: rgba(32, 73, 125, 0.08); color: var(--accent-start); font-weight: 600; }
+        .option-item.correct { border-color: var(--success); background: #ECFDF5; color: #047857; }
+        .option-item.incorrect {
+            border-color: #EF4444;
+            background: #FEF2F2;
+            color: #B91C1C;
+            animation: wrongAnswer 0.16s ease-in-out 3;
+        }
+        @keyframes wrongAnswer {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-7px); }
+            40%, 80% { transform: translateX(7px); }
+        }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+        .step-status { font-size: 13px; text-align: center; margin: -4px 0 16px; }
+        .quiz-feedback { min-height: 20px; margin: 0; font-size: 13px; }
+        
+        .phrase-card {
+            background: white;
+            padding: 18px;
+            border-radius: var(--radius-md);
+            margin-bottom: 14px;
+            border-left: 5px solid var(--accent-start);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+        .welcome-bird-button {
+            display: block;
+            width: min(250px, 72vw);
+            margin: 0 auto 18px;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        .welcome-bird {
+            display: block;
+            width: 100%;
+            overflow: visible;
+        }
+        .welcome-bird .bird-body {
+            transform-box: view-box;
+            transform-origin: 50% 97%;
+            animation: bird-lean 2.8s ease-in-out infinite;
+        }
+        .welcome-bird .bird-wing {
+            transform-box: fill-box;
+            transform-origin: 12% 18%;
+        }
+        .welcome-bird-button:focus-visible { outline: 3px solid var(--accent-start); outline-offset: 5px; border-radius: 50%; }
+        .welcome-bird-button.flap .bird-wing { animation: bird-flap 0.16s ease-in-out 4; }
+        @keyframes bird-lean {
+            0%, 100% { transform: rotate(-4deg); }
+            45% { transform: rotate(5deg); }
+            72% { transform: rotate(-5deg); }
+        }
+        @keyframes bird-flap {
+            0%, 100% { transform: rotate(0deg) scaleY(1); }
+            50% { transform: rotate(-24deg) scaleY(0.82); }
+        }
+        .profile-avatar-button {
+            width: 48px;
+            height: 48px;
+            flex: 0 0 48px;
+            padding: 0;
+            overflow: hidden;
+            border: 2px solid white;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(185,212,51,0.3), rgba(185,212,51,0.12));
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+        .profile-avatar-button img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-avatar-large {
+            display: block;
+            width: 92px;
+            height: 92px;
+            margin: 0 auto 16px;
+            overflow: hidden;
+            border: 3px solid white;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(185,212,51,0.3), rgba(185,212,51,0.12));
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            object-fit: cover;
+        }
+        .profile-avatar-image[hidden] { display: none; }
+        .growth-chart { width: 100%; height: auto; overflow: visible; }
+        .growth-chart text { fill: var(--secondary-text); font: 10px var(--font-main); }
+        .improvement-item { padding: 12px 14px; margin-bottom: 10px; border-radius: var(--radius-sm); background: rgba(32, 73, 125, 0.06); font-size: 13px; line-height: 1.5; }
+        .phrase-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            display: grid;
+            place-items: center;
+            padding: 20px;
+            background: rgba(17, 24, 39, 0.58);
+        }
+        .phrase-modal[hidden] { display: none; }
+        .phrase-modal-card {
+            width: min(100%, 430px);
+            max-height: min(80vh, 680px);
+            overflow-y: auto;
+            padding: 24px;
+            border-radius: var(--radius-lg);
+            background: #fffef8;
+            box-shadow: 0 24px 70px rgba(0,0,0,0.3);
+        }
+        .phrase-modal-card .phrase-card { padding: 14px; }
+        .phrase-modal-actions { display: flex; gap: 10px; margin: 4px 0 16px; }
+        .phrase-modal-actions .btn { flex: 1; width: auto; margin: 0; padding: 13px 10px; font-size: 12px; }
+        .admin-access-button {
+            position: fixed;
+            top: 16px;
+            left: max(16px, calc((100vw - 480px) / 2 + 16px));
+            z-index: 9999;
+            width: 42px;
+            height: 42px;
+            padding: 0;
+            border: 1px solid rgba(255,255,255,0.8);
+            border-radius: 50%;
+            background: var(--surface);
+            color: var(--primary-text);
+            box-shadow: var(--shadow-glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .admin-access-button:focus-visible,
+        .admin-modal-card button:focus-visible,
+        .admin-password:focus-visible {
+            outline: 3px solid rgba(32, 73, 125, 0.35);
+            outline-offset: 3px;
+        }
+        .admin-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: grid;
+            place-items: center;
+            padding: 20px;
+            background: rgba(17, 24, 39, 0.58);
+        }
+        .admin-modal[hidden] { display: none; }
+        .admin-modal-card {
+            width: min(100%, 380px);
+            padding: 24px;
+            border: 1px solid rgba(255,255,255,0.7);
+            border-radius: var(--radius-lg);
+            background: var(--surface);
+            box-shadow: 0 24px 70px rgba(0,0,0,0.3);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        .admin-modal-card h2 { margin-bottom: 8px; }
+        .admin-modal-card p { margin-bottom: 16px; font-size: 13px; }
+        .admin-password {
+            width: 100%;
+            margin-bottom: 12px;
+            padding: 14px 16px;
+            border: 1px solid rgba(32, 73, 125, 0.18);
+            border-radius: var(--radius-md);
+            background: rgba(255,255,255,0.9);
+            color: var(--primary-text);
+            font: 15px var(--font-main);
+        }
+        .admin-error {
+            min-height: 18px;
+            margin: 0 0 12px;
+            color: #B91C1C;
+            font-size: 12px;
+        }
+        .admin-modal-actions { display: flex; gap: 10px; }
+        .admin-modal-actions .btn { width: auto; flex: 1; margin: 0; padding: 13px 10px; font-size: 12px; }
+        /* FIXED NAVIGATION BAR */
+        .bottom-nav {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            /* CRITICAL FIX: Max-width prevents stretching on desktop */
+            width: calc(100% - 56px);
+            max-width: 424px; 
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            padding: 8px 10px;
+            border-radius: 50px;
+            display: none;
+            justify-content: space-between;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+            z-index: 100;
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+        .bottom-nav.visible { display: flex; }
+        .nav-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            border-radius: 24px;
+            background: #000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+            pointer-events: none;
+            transform-origin: center;
+            will-change: transform, width, height;
+        }
+        .nav-item {
+            position: relative;
+            z-index: 1;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--secondary-text);
+            text-align: center;
+            cursor: pointer;
+            padding: 10px 12px;
+            border-radius: 24px;
+            transition: color 0.2s, transform 0.2s ease;
+        }
+        .nav-item:hover { transform: translateY(-2px); color: var(--accent-start); }
+        .nav-item.active {
+            color: white;
+        }
+        .nav-item.active:hover { color: white; }
+
+        .tag {
+            display: inline-block;
+            padding: 6px 12px;
+            background: linear-gradient(135deg, rgba(185, 212, 51, 0.2), rgba(185, 212, 51, 0.08));
+            color: var(--accent-start);
+            border-radius: 24px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .lesson-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+        .lesson-badges .tag { margin-bottom: 14px; }
+        .lesson-level.level-beginner { background: rgba(16, 185, 129, 0.12); color: #047857; }
+        .lesson-level.level-intermediate { background: rgba(59, 130, 246, 0.12); color: #1D4ED8; }
+        .lesson-level.level-advanced { background: rgba(139, 92, 246, 0.12); color: #6D28D9; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+        .stat-box { 
+            background: white; 
+            padding: 20px; 
+            border-radius: var(--radius-md); 
+            text-align: center; 
+            box-shadow: var(--shadow-glass);
+        }
+        .stat-val { font-size: 28px; font-weight: 700; display: block; margin-bottom: 4px; background: linear-gradient(135deg, var(--accent-start), var(--accent-end)); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-label { font-size: 11px; color: var(--secondary-text); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .locked-card {
+            opacity: 0.6;
+            position: relative;
+            background: #f9fafb;
+            border: 1px dashed #ccc;
+        }
+        .lock-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.1);
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #666;
+        }
+
+        input[type="text"] {
+            font-family: var(--font-main);
+            width: 100%;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid #E5E7EB;
+            font-size: 15px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .dictionary-entry {
+            padding: 20px;
+            border: 1px solid rgba(32, 73, 125, 0.14);
+        }
+        .dictionary-entry p { margin-bottom: 14px; }
+        .dictionary-primary {
+            background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+        }
+        .dictionary-search label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary-text);
+        }
+        .dictionary-input {
+            width: 100%;
+            min-width: 0;
+            padding: 15px 16px;
+            border: 1px solid #E5E7EB;
+            border-radius: var(--radius-md);
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            font: 15px var(--font-main);
+            color: var(--primary-text);
+        }
+        .dictionary-input:focus {
+            outline: 2px solid rgba(32, 73, 125, 0.35);
+            border-color: var(--accent-start);
+        }
+        .dictionary-search .btn { margin-top: 12px; }
+        .dictionary-status {
+            min-height: 20px;
+            margin: 4px 0 16px;
+            font-size: 13px;
+        }
+        .dictionary-result-card h3 {
+            margin-bottom: 6px;
+            font-size: 24px;
+            overflow-wrap: anywhere;
+        }
+        .dictionary-phonetic {
+            margin: 0 0 14px;
+            color: var(--accent-start);
+            font-size: 14px;
+        }
+        .dictionary-definition { margin-bottom: 16px; }
+        .dictionary-meaning { padding: 14px 0; border-top: 1px solid rgba(32, 73, 125, 0.1); }
+        .dictionary-meaning:first-child { border-top: 0; }
+        .dictionary-meaning h4 { margin-bottom: 8px; color: var(--accent-start); font-size: 13px; }
+        .dictionary-meaning ol { padding-left: 22px; }
+        .dictionary-meaning li { margin-bottom: 10px; color: var(--primary-text); font-size: 13px; line-height: 1.55; }
+        .dictionary-example { display: block; margin-top: 4px; color: var(--secondary-text); font-style: italic; }
+        .dictionary-audio {
+            width: auto;
+            margin: 0;
+            padding: 12px 16px;
+        }
+        .accent-heading { margin-top: 4px; }
+        .accent-heading + p { margin-bottom: 16px; }
+        .dictionary-play-all { margin-bottom: 16px; }
+        .accent-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+        .accent-option { position: relative; min-width: 0; }
+        .accent-option:last-child:nth-child(odd) {
+            grid-column: 1 / -1;
+            width: calc(50% - 6px);
+            justify-self: center;
+        }
+        .accent-button {
+            min-height: 58px;
+            margin: 0;
+            padding: 12px 10px;
+            justify-content: flex-start;
+            border: 1px solid rgba(32, 73, 125, 0.12);
+            font-size: 12px;
+            text-align: left;
+            line-height: 1.35;
+        }
+        .accent-button:disabled { opacity: 0.52; cursor: not-allowed; }
+        .accent-flag { margin-right: 2px; font-size: 19px; }
+        .voice-tooltip {
+            position: absolute;
+            z-index: 5;
+            left: 50%;
+            bottom: calc(100% + 6px);
+            width: max-content;
+            max-width: 180px;
+            padding: 7px 9px;
+            border-radius: 8px;
+            background: #1F2937;
+            color: white;
+            font-size: 10px;
+            line-height: 1.35;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transform: translate(-50%, 3px);
+            transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+            pointer-events: none;
+        }
+        .accent-option:hover .voice-tooltip,
+        .accent-option:focus-within .voice-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, 0);
+        }
+        .accent-status { min-height: 18px; margin: 14px 0 0; font-size: 12px; }
+        .dictionary-back { margin-top: 8px; }
+        .accent-volume-note {
+            margin: 14px 0 16px;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+        .accent-guide-item {
+            overflow: hidden;
+            margin-bottom: 12px;
+            border: 1px solid rgba(32, 73, 125, 0.14);
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+        .accent-guide-item summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 16px;
+            color: var(--primary-text);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            list-style: none;
+        }
+        .accent-guide-item summary::-webkit-details-marker { display: none; }
+        .accent-guide-item summary::after {
+            content: '⌄';
+            color: var(--accent-start);
+            font-size: 20px;
+            line-height: 1;
+            transition: transform 0.2s ease;
+        }
+        .accent-guide-item[open] summary::after { transform: rotate(180deg); }
+        .accent-guide-content {
+            padding: 0 16px 16px;
+            border-top: 1px solid rgba(32, 73, 125, 0.1);
+        }
+        .accent-guide-content p { margin: 12px 0; font-size: 13px; }
+        .accent-guide-content a {
+            color: var(--accent-start);
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+        .accent-guide-back { margin-top: 8px; }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                scroll-behavior: auto !important;
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <button type="button" class="admin-access-button" id="admin-access-button"
+        aria-label="Admin access" aria-haspopup="dialog" aria-controls="admin-modal">⚙️</button>
+    <div class="admin-modal" id="entry-role-modal" role="dialog" aria-modal="true"
+        aria-labelledby="entry-role-title" hidden>
+        <div class="admin-modal-card">
+            <h2 id="entry-role-title">Are you an admin?</h2>
+            <p>Choose how you would like to continue.</p>
+            <div class="admin-modal-actions">
+                <button type="button" class="btn btn-secondary" id="entry-continue-as-learner">No</button>
+                <button type="button" class="btn btn-primary" id="entry-admin-yes">Yes</button>
+            </div>
+        </div>
+    </div>
+    <div class="admin-modal" id="admin-modal" role="dialog" aria-modal="true"
+        aria-labelledby="admin-modal-title" hidden>
+        <form class="admin-modal-card" id="admin-access-form">
+            <h2 id="admin-modal-title">Admin Access</h2>
+            <p>Enter the admin password to continue.</p>
+            <input class="admin-password" id="admin-password" type="password"
+                placeholder="Password" autocomplete="current-password" aria-label="Admin password">
+            <p class="admin-error" id="admin-error" role="alert" aria-live="polite"></p>
+            <div class="admin-modal-actions">
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="button" class="btn btn-secondary" id="admin-go-back">Go Back</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="p-welcome" class="page active" style="padding-top: 120px; text-align: center;">
+        <button type="button" class="welcome-bird-button" id="welcome-bird-button" aria-label="Make the bird flap its wings">
+            <svg class="welcome-bird" viewBox="0 0 320 390" role="img" aria-label="A blue and green bird with a bright green beak">
+                <circle cx="160" cy="195" r="180" fill="#f3f8e9"/>
+                <defs>
+                    <linearGradient id="bird-body-gradient" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#376da3"/>
+                        <stop offset="100%" stop-color="#20497d"/>
+                    </linearGradient>
+                </defs>
+                <g class="bird-body">
+                    <ellipse cx="166" cy="257" rx="125" ry="126" fill="url(#bird-body-gradient)"/>
+                    <circle cx="151" cy="117" r="116" fill="url(#bird-body-gradient)"/>
+                    <g class="bird-wing">
+                        <path d="M171 139 C210 132 256 178 275 244 C291 300 267 337 232 321 C197 305 172 244 153 197 C140 166 145 146 171 139Z" fill="#b9d433"/>
+                        <path d="M233 248 C256 265 283 267 294 293 C307 325 286 359 258 348 C228 337 208 300 205 268 C203 255 205 247 206 239Z" fill="#879f24"/>
+                    </g>
+                    <circle cx="113" cy="82" r="32" fill="#fff"/>
+                    <circle cx="117" cy="84" r="22" fill="#171522"/>
+                    <circle cx="124" cy="75" r="6" fill="#fff"/>
+                    <path d="M11 119 C11 95 31 82 51 90 C65 96 74 110 68 126 C61 144 38 153 21 143 C14 138 11 129 11 119Z" fill="#c8df43"/>
+                    <circle cx="32" cy="105" r="8" fill="#e7f2a5"/>
+                </g>
+                <path d="M118 343 V380 M189 343 V380" stroke="#20497d" stroke-width="18" stroke-linecap="round"/>
+                <path d="M82 379 H220" stroke="#b9d433" stroke-width="19" stroke-linecap="round"/>
+                <circle cx="37" cy="370" r="7" fill="#b9d433"/>
+            </svg>
+        </button>
+        <div style="margin-bottom: 40px;">
+            <h1>Bolchaal</h1>
+            <p style="font-size: 18px; color: var(--secondary-text); font-weight: 500;">English for everyday life.</p>
+        </div>
+        <div class="glass-card" style="text-align: left; margin-bottom: 32px;">
+            <h3>Confidence for every conversation</h3>
+            <p style="margin-bottom: 0;">Watch short clips, discover useful phrases, and practise speaking in your own voice.</p>
+            <div style="height: 4px; width: 50px; background: linear-gradient(90deg, var(--accent-start), var(--accent-end)); border-radius: 2px; margin-top: 16px;"></div>
+        </div>
+        <button class="btn btn-primary" onclick="beginEntryFlow()">Start Learning</button>
+        <button class="btn btn-secondary" onclick="alert('How it works: Watch → Learn → Speak')">How it works</button>
+    </div>
+
+    <div id="p-setup" class="page">
+        <h2>Make this your space</h2>
+        <p>Choose how you’d like to begin.</p>
+        <label style="font-weight: 600; display:block; margin: 24px 0 10px 0; font-size: 13px; color: var(--primary-text);">What should we call you?</label>
+        <input type="text" id="username-input" placeholder="Name or nickname">
+        <label style="font-weight: 600; display:block; margin: 20px 0 12px 0; font-size: 13px; color: var(--primary-text);">Comfort level?</label>
+        <div class="option-item" onclick="selectOption(this)">I’m just starting</div>
+        <div class="option-item" onclick="selectOption(this)">I know a little</div>
+        <div class="option-item" onclick="selectOption(this)">Ready for a challenge</div>
+        <button class="btn btn-primary" style="margin-top: 24px;" onclick="completeSetup()">Continue as guest</button>
+    </div>
+
+    <div id="p-home" class="page">
+        <header style="margin-bottom: 28px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <p style="margin:0; font-size: 14px; font-weight: 500;" id="greeting-text">Good morning,</p>
+                <h2 style="margin:0;" id="display-name">Learner</h2>
+            </div>
+            <button type="button" class="profile-avatar-button" aria-label="Open your profile" onclick="goTo('p-profile')">
+                <img class="profile-avatar-image" alt="" hidden>
+            </button>
+        </header>
+        <div id="recommended-container"></div>
+        <div class="glass-card dictionary-entry">
+            <h3>Word Dictionary</h3>
+            <p>Look up a word, hear its pronunciation, and explore different accents.</p>
+            <button type="button" class="btn btn-primary dictionary-primary" onclick="goTo('p-dictionary')">Open Dictionary</button>
+        </div>
+        <h3>Your Progress</h3>
+        <div class="stat-grid">
+            <div class="stat-box">
+                <span class="stat-val" id="stat-lessons">0</span>
+                <span class="stat-label">Lessons</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-val" id="stat-level">Beginner</span>
+                <span class="stat-label">Level</span>
+            </div>
+        </div>
+        <h3>More Lessons</h3>
+        <div id="more-lessons-container"></div>
+    </div>
+
+    <div id="p-clip" class="page">
+        <span class="tag" id="lesson-tag">Lesson 1</span>
+        <h2 id="clip-title">The "Waterfall" Effect</h2>
+        <p>Watch and listen. Read the captions below.</p>
+        
+        <div class="video-wrapper">
+            <div class="video-container">
+                <video id="main-video" controls playsinline preload="metadata">
+                    <source id="lesson-video-source" type="video/mp4">
+                </video>
+            </div>
+            <div class="caption-box">
+                <div class="caption-text empty" id="caption-text">Captions will appear here...</div>
+            </div>
+        </div>
+
+        <p id="video-status" class="step-status" aria-live="polite">Watch the full video to continue.</p>
+        <button id="continue-from-video" class="btn btn-primary" onclick="openPhrasePrompt()" disabled>Continue to Quiz</button>
+    </div>
+
+    <div id="p-transcript" class="page">
+        <h2>What did we learn?</h2>
+        <p id="transcript-summary">Summary goes here.</p>
+        <h3>Useful Phrases</h3>
+        <p id="vocabulary-status" class="step-status" aria-live="polite">Tap Hear for each phrase to mark it practised.</p>
+        <div id="phrases-container"></div>
+        <div class="glass-card" style="background: linear-gradient(135deg, rgba(185,212,51,0.2), rgba(185,212,51,0.08)); border: none;">
+            <h3>💡 Tip</h3>
+            <p id="lang-tip" style="margin:0; color: var(--accent-start); font-weight: 500;">Tip goes here.</p>
+        </div>
+        <button id="continue-from-vocabulary" class="btn btn-primary" onclick="goTo('p-quiz')" disabled>Try Quiz</button>
+    </div>
+
+    <div id="p-quiz" class="page">
+        <h2>Quick Check</h2>
+        <p id="quiz-status" class="step-status" aria-live="polite">Answer every question correctly to continue.</p>
+        <p class="step-status" aria-live="polite">Current lesson points: <span id="quiz-points">10</span></p>
+        <div id="quiz-container"></div>
+        <button id="continue-from-quiz" class="btn btn-primary" onclick="goTo('p-speaking')" disabled>Continue</button>
+    </div>
+
+    <div id="p-speaking" class="page" style="text-align: center; padding-top: 40px;">
+        <h2>Your Turn</h2>
+        <p>Say this aloud, then confirm when you have finished practising:</p>
+        <div class="glass-card" style="padding: 40px 20px; margin: 28px 0; border: 2px solid rgba(32, 73, 125, 0.1);">
+            <h3 id="speaking-prompt" style="font-size: 20px; color: var(--primary-text); font-weight: 600;">Prompt</h3>
+        </div>
+        <button class="btn btn-secondary" onclick="speakText(document.getElementById('speaking-prompt').innerText)">🔊 Hear Example</button>
+        <button class="btn btn-primary" onclick="completeSpeakingPractice()">I’ve finished speaking</button>
+    </div>
+
+    <div id="p-feedback" class="page" style="text-align: center; padding-top: 40px;">
+        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--success), #34D399); border-radius: 50%; margin: 0 auto 24px auto; display: flex; align-items: center; justify-content: center; color: white; font-size: 36px; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);">✓</div>
+        <h2>Great Job!</h2>
+        <div class="glass-card">
+            <h3>Feedback</h3>
+            <p>Good effort! Try to link the words together slightly more next time for better flow.</p>
+        </div>
+        <button class="btn btn-primary" onclick="finishLesson()">Finish Lesson</button>
+    </div>
+
+    <div id="p-complete" class="page" style="text-align: center; padding-top: 60px;">
+        <h2>You did it!</h2>
+        <div style="font-size: 48px; font-weight: 700; margin: 20px 0; background: linear-gradient(135deg, var(--accent-start), var(--accent-end)); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">+<span id="completion-points">0</span> pts</div>
+        <p>You listened, learned, and spoke.</p>
+        <button class="btn btn-primary" onclick="goTo('p-home')">Back Home</button>
+    </div>
+
+    <div class="bottom-nav">
+        <span class="nav-indicator" aria-hidden="true"></span>
+        <div class="nav-item active" onclick="goTo('p-home')">Home</div>
+        <div class="nav-item" onclick="goTo('p-progress')">Progress</div>
+        <div class="nav-item" onclick="goTo('p-profile')">Profile</div>
+        <div class="nav-item" onclick="goTo('p-about')">About</div>
+    </div>
+
+    <div id="p-progress" class="page">
+        <h2>Your Progress</h2>
+        <div class="stat-grid">
+            <div class="stat-box">
+                <span class="stat-val" id="prog-lessons">0</span>
+                <span class="stat-label">Completed</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-val" id="prog-points">0</span>
+                <span class="stat-label">Points</span>
+            </div>
+        </div>
+        <p>Keep going at your own pace. Communication matters more than sounding perfect.</p>
+    </div>
+
+    <div id="p-profile" class="page">
+        <h2>Your Profile</h2>
+        <p id="profile-summary"></p>
+        <img class="profile-avatar-large profile-avatar-image" alt="" hidden>
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('profile-photo-input').click()">Choose profile photo</button>
+        <input id="profile-photo-input" type="file" accept="image/*" hidden>
+        <p id="profile-photo-status" role="status" aria-live="polite"></p>
+        <h3>Learning growth</h3>
+        <div class="glass-card">
+            <p id="growth-chart-caption">Your lesson points over time.</p>
+            <svg id="growth-chart" class="growth-chart" viewBox="0 0 360 190" role="img" aria-label="Learning progress chart"></svg>
+        </div>
+        <h3>Area to improve</h3>
+        <div id="improvement-report" class="glass-card"></div>
+        <h3>Lesson history</h3>
+        <div id="profile-history"></div>
+    </div>
+
+    <div id="p-about" class="page">
+        <h2>About Bolchaal</h2>
+        <p>Bolchaal helps you practise English for everyday life using short clips.</p>
+        <div class="glass-card">
+            <h3>"Listen. Learn. Bol ke dekho."</h3>
+            <p>Your voice belongs here.</p>
+        </div>
+    </div>
+
+    <div id="p-dictionary" class="page">
+        <button type="button" class="btn btn-secondary dictionary-back" onclick="goTo('p-home')">Back to Dashboard</button>
+        <span class="tag">Word Explorer</span>
+        <h2>Dictionary</h2>
+        <p>Find a definition and listen to how the word sounds around the world.</p>
+        <form id="dictionary-search-form" class="dictionary-search">
+            <label for="dictionary-word-input">Search for a word</label>
+            <input id="dictionary-word-input" class="dictionary-input" type="search" maxlength="80" autocomplete="off" placeholder="Type an English word" required>
+            <button type="submit" class="btn btn-primary dictionary-primary">Search</button>
+        </form>
+        <p id="dictionary-status" class="dictionary-status" role="status" aria-live="polite"></p>
+        <div id="dictionary-results" hidden>
+            <div class="glass-card dictionary-result-card">
+                <h3 id="dictionary-result-word"></h3>
+                <p id="dictionary-result-phonetic" class="dictionary-phonetic"></p>
+                <div id="dictionary-result-meanings" class="dictionary-definition"></div>
+                <button id="dictionary-original-audio" type="button" class="btn btn-secondary dictionary-audio" hidden>Play Original Audio</button>
+            </div>
+            <section class="glass-card">
+                <h3 class="accent-heading">Hear it in different accents</h3>
+                <p>Choose a voice, or play every available accent in sequence.</p>
+                <button id="dictionary-play-all" type="button" class="btn btn-primary dictionary-primary dictionary-play-all" disabled>Play All Accents</button>
+                <div id="dictionary-accent-grid" class="accent-grid"></div>
+                <p id="dictionary-accent-status" class="accent-status" role="status" aria-live="polite"></p>
+                <p class="accent-volume-note">Voice playback is set to the browser's maximum volume. The device's voice engine and audio settings can still affect loudness.</p>
+                <button type="button" class="btn btn-secondary" onclick="goTo('p-accent-guide')">Learn More About Accents</button>
+            </section>
+        </div>
+    </div>
+
+    <div id="p-accent-guide" class="page">
+        <button type="button" class="btn btn-secondary accent-guide-back" onclick="goTo('p-dictionary')">Back to Dictionary</button>
+        <span class="tag">Language &amp; Culture</span>
+        <h2>Why accents sound different</h2>
+        <p>Accents grow through generations of language change, migration, contact, and local identity. These short histories describe the voice models offered here—not every way people speak these languages.</p>
+
+        <details class="accent-guide-item">
+            <summary><span>🇺🇸 US English</span></summary>
+            <div class="accent-guide-content">
+                <p>English in North America developed into many regional varieties as communities settled across a vast continent and later migration brought new influences. Many US accents pronounce the “r” in words like <em>car</em>; others do not, so there is no single US accent.</p>
+                <a href="https://en.wikipedia.org/wiki/American_English" target="_blank" rel="noopener noreferrer">Source: American English</a><br>
+                <a href="https://en.wikipedia.org/wiki/Rhoticity_in_English" target="_blank" rel="noopener noreferrer">More: Rhoticity in English</a>
+            </div>
+
+        </details>
+
+        <details class="accent-guide-item">
+            <summary><span>🇬🇧 British English</span></summary>
+            <div class="accent-guide-content">
+                <p>British English is an umbrella for many varieties across the UK, not one accent. Local history shaped their sounds; for example, many accents in southern England do not pronounce “r” after a vowel, while some UK accents do.</p>
+                <a href="https://en.wikipedia.org/wiki/British_English" target="_blank" rel="noopener noreferrer">Source: British English</a><br>
+                <a href="https://en.wikipedia.org/wiki/Rhoticity_in_English" target="_blank" rel="noopener noreferrer">More: Rhoticity in English</a>
+            </div>
+        </details>
+
+        <details class="accent-guide-item">
+            <summary><span>🇫🇷 French</span></summary>
+            <div class="accent-guide-content">
+                <p>French developed from spoken Latin in Roman Gaul, with influence from Celtic languages and Frankish speech. It later spread through education, government, and migration. The French voice here is one standard-style model among many French varieties worldwide.</p>
+                <a href="https://en.wikipedia.org/wiki/French_language" target="_blank" rel="noopener noreferrer">Source: French language</a><br>
+                <a href="https://en.wikipedia.org/wiki/Standard_French" target="_blank" rel="noopener noreferrer">More: Standard French</a>
+            </div>
+        </details>
+
+        <details class="accent-guide-item">
+            <summary><span>🇩🇪 German</span></summary>
+            <div class="accent-guide-content">
+                <p>German has a wide range of regional dialects and national standards. Standard German developed as a shared form for writing and formal communication across dialect areas, while regional speech continues to shape pronunciation.</p>
+                <a href="https://en.wikipedia.org/wiki/German_language" target="_blank" rel="noopener noreferrer">Source: German language</a><br>
+                <a href="https://en.wikipedia.org/wiki/Standard_German" target="_blank" rel="noopener noreferrer">More: Standard German</a>
+            </div>
+        </details>
+
+        <details class="accent-guide-item">
+            <summary><span>🇮🇹 Italian</span></summary>
+            <div class="accent-guide-content">
+                <p>Modern standard Italian is based on literary Florentine Tuscan. It became a common national language gradually, especially through schooling and mass communication; local speech traditions still give Italian accents strong regional character.</p>
+                <a href="https://en.wikipedia.org/wiki/Italian_language" target="_blank" rel="noopener noreferrer">Source: Italian language</a>
+            </div>
+        </details>
+
+        <details class="accent-guide-item">
+            <summary><span>🇨🇳 Chinese / Mandarin</span></summary>
+            <div class="accent-guide-content">
+                <p>Mandarin includes many regional varieties. The standard Mandarin voice is largely based on Beijing pronunciation and was established as a shared form for communication; regional accents and vocabulary remain diverse. Mandarin tones help distinguish word meanings.</p>
+                <a href="https://en.wikipedia.org/wiki/Mandarin_Chinese" target="_blank" rel="noopener noreferrer">Source: Mandarin Chinese</a><br>
+                <a href="https://en.wikipedia.org/wiki/Standard_Chinese" target="_blank" rel="noopener noreferrer">More: Standard Chinese</a>
+            </div>
+        </details>
+
+        <details class="accent-guide-item">
+            <summary><span>🇯🇵 Japanese</span></summary>
+            <div class="accent-guide-content">
+                <p>Japanese has regional dialects with differences in pronunciation, rhythm, and vocabulary. The standard model is associated with Tokyo speech and spread through national education and broadcasting; it is only one of Japan's many ways of speaking.</p>
+                <a href="https://en.wikipedia.org/wiki/Japanese_language" target="_blank" rel="noopener noreferrer">Source: Japanese language</a><br>
+                <a href="https://en.wikipedia.org/wiki/Japanese_dialects" target="_blank" rel="noopener noreferrer">More: Japanese dialects</a>
+            </div>
+        </details>
+
+        <details class="accent-guide-item">
+            <summary><span>🇷🇺 Russian</span></summary>
+            <div class="accent-guide-content">
+                <p>Russian developed within the East Slavic language family and is spoken across a large region. A shared literary and educational standard helped people communicate across it, while regional speech retains differences in sounds and rhythm.</p>
+                <a href="https://en.wikipedia.org/wiki/Russian_language" target="_blank" rel="noopener noreferrer">Source: Russian language</a>
+            </div>
+        </details>
+    </div>
+    <div id="phrase-prompt" class="phrase-modal" role="dialog" aria-modal="true" aria-labelledby="phrase-prompt-title" hidden>
+        <div class="phrase-modal-card">
+            <span class="tag">Optional review</span>
+            <h2 id="phrase-prompt-title">Important phrases</h2>
+            <div class="phrase-modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="startQuizFromPrompt()">Skip phrases</button>
+                <button type="button" class="btn btn-primary" onclick="startQuizFromPrompt()">Continue to Quiz</button>
+            </div>
+            <p>Review these phrases if you like, or skip straight to the quiz.</p>
+            <div id="phrase-prompt-list"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const lessons = [
+        {
+            id: 0,
+            title: "Dunki Final Clip",
+            level: "Beginner",
+            source: "Dunki Final Clip",
+            file: "Dunkifinalclip.mp4",
+            desc: "A confident argument about Taj Mahal, Agra and the value of English.",
+            summary: "The speaker challenges an exam that tests knowledge of Taj Mahal, Agra instead of English speaking ability. He explains that his knowledge of the monument may be limited, but his English skills are strong and confident.",
+            phrases: [
+                { w: "My knowledge is limited", m: "I know only a little about it.", e: "My knowledge about Taj Mahal is limited." },
+                { w: "English speaking skill", m: "The ability to speak English well.", e: "Do you want to test my English speaking skill?" },
+                { w: "Re-examine your examination system", m: "Review the way the exam is designed.", e: "You must re-examine your examination system." }
+            ],
+            tip: "Use contrast sentences to make a point stronger: 'limited' vs 'unlimited'.",
+            quiz: [
+                {
+                    type: "multiple_choice",
+                    q: "What is the speaker trying to prove in this clip?",
+                    hint: "Look at the theme of his speech.",
+                    opts: ["He knows Taj Mahal perfectly", "He is better at English than the exam allows", "He is afraid of exams"],
+                    ans: 1,
+                    explanation: "He argues that his English ability should be judged, not his knowledge about Taj Mahal, Agra."
+                },
+                {
+                    type: "multiple_choice",
+                    q: "What does the speaker say about his knowledge of Taj Mahal, Agra?",
+                    hint: "He uses the word 'limited'.",
+                    opts: ["It is unlimited", "It is limited", "He knows nothing at all"],
+                    ans: 1,
+                    explanation: "He says his knowledge about Taj Mahal, Agra is limited, but his knowledge of English is unlimited."
+                },
+                {
+                    type: "sentence_builder",
+                    q: "Tap the words in the correct order to make a proper English sentence:",
+                    hint: "Start with the subject and then the verb.",
+                    words: ["knowledge", "English", "My", "is", "about", "unlimited"],
+                    sequence: ["My", "knowledge", "about", "English", "is", "unlimited"],
+                    explanation: "This sentence structure is natural and clear: 'My knowledge about English is unlimited.'"
+                }
+            ],
+            speak: "My knowledge about Taj Mahal is limited, but my knowledge about English is unlimited.",
+            vtt: `WEBVTT
+
+00:00:03.000 --> 00:00:37.000
+Mr. Sukhi, speak for two minutes on Taj Mahal, Agra. Sir, do you want to test my knowledge about Taj Mahal, Agra or check my English speaking skill? My knowledge about Taj Mahal, Agra is limited but my knowledge about English language is unlimited. I understand noun, pronoun, adjective, verb, adverb, conjunction, colon, semicolon, comma and full stop.
+
+00:00:37.000 --> 00:01:00.000
+I make conversation confidently with any English person, Prince Charles, wife Diana, mother-in-law, Queen Elizabeth, part two. I find it very disturbing that your esteemed organization is trying to judge me by my knowledge about Taj Mahal, Agra and not by my English grammar. You must re-examine your examination system because it is about English and not about Taj Mahal, Agra.`
+        },
+        {
+            id: 1,
+            title: "Social Reactions & Phobias",
+            level: "Beginner",
+            source: "Phobia Workshop",
+            file: "Phobiaworkshopdrama.mp4",
+            desc: "Learn how to handle awkward social situations and polite interruptions.",
+            summary: "Lee runs a workshop for people with specific phobias. Jim fears apologies, Karen fears repetition, and Ronni fears silence. They struggle to have a normal conversation without triggering each other.",
+            phrases: [
+                { w: "Why don't you tell me about yourselves?", m: "A polite way to invite others to introduce themselves.", e: "Why don't you tell me about yourselves? Starting with you." },
+                { w: "Let's try and avoid them, shall we?", m: "A gentle suggestion to stop doing something annoying.", e: "Right, we'll try and avoid them, shall we?" },
+                { w: "Can we just try and make some progress?", m: "Used when a conversation is stuck or going off-track.", e: "Can we just try and make some progress, please?" },
+                { w: "I bark at other people's phobias", m: "Tim's unusual reaction to other people's fears.", e: "What's the matter with you? I bark at other people's phobias." }
+            ],
+            tip: "Notice how Lee uses questions ('Shall we?') to soften commands. It makes him sound less bossy and more collaborative.",
+            quiz: [
+                {
+                    type: "multiple_choice",
+                    q: "What is a “phobia”?",
+                    hint: "Think of the Hindi word “Darr” or “Bhay”.",
+                    opts: ["A strong fear of something", "A type of delicious food", "A happy celebration"],
+                    ans: 0,
+                    explanation: "Correct! A “phobia” means a strong, unusual fear of something, like spiders or heights."
+                },
+                {
+                    type: "matching",
+                    q: "Match the person to their funny fear (phobia):",
+                    hint: "Listen carefully to what each person says when they introduce themselves!",
+                    pairs: [
+                        { left: "Jim", right: "Fear of apologies (saying sorry)" },
+                        { left: "Karen", right: "Fear of repetition (saying things again)" },
+                        { left: "Ronni", right: "Fear of awkward silences (no one talking)" }
+                    ],
+                    explanation: "Great job! In English, we say “fear of [something]”. For example, “fear of silence”."
+                },
+                {
+                    type: "sentence_builder",
+                    q: "Tap the words in the correct order to make a proper English sentence:",
+                    hint: "Start with the subject “I”, then the verb “have”.",
+                    words: ["fear", "a", "have", "I", "of", "apologies"],
+                    sequence: ["I", "have", "a", "fear", "of", "apologies"],
+                    explanation: "Perfect! “I have a fear of...” is a useful sentence structure for talking about things you don't like."
+                },
+                {
+                    type: "multiple_choice",
+                    q: "True or False: Tim says “Woof!” because he is an actual dog in the workshop.",
+                    hint: "Is Tim a human or a dog?",
+                    opts: ["True", "False"],
+                    ans: 1,
+                    explanation: "False! Tim is a human, but he barks whenever someone mentions a phobia. It is a comedy joke!"
+                },
+                {
+                    type: "multiple_choice",
+                    q: "Ronni has a fear of awkward silences. What does Lee suggest they do to help her?",
+                    hint: "Look at the timestamp [01:02].",
+                    opts: ["Go to sleep", "Keep the conversation flowing", "Start shouting"],
+                    ans: 1,
+                    explanation: "Correct! “Keep the conversation flowing” means to keep talking naturally so there is no awkward silence."
+                },
+                {
+                    type: "open_ended",
+                    q: "Can you name one common fear (phobia) in English? (Example: Fear of darkness, Fear of spiders, Fear of heights)",
+                    hint: "Think of something many people are scared of!",
+                    explanation: "Excellent! You are building your English vocabulary. For example, “fear of heights” is called acrophobia, but “fear of heights” is perfectly natural!"
+                }
+            ],
+            speak: "Can we just try and make some progress, please?",
+            vtt: `WEBVTT
+
+00:00:03.010 --> 00:00:10.500
+I would like to welcome you all to the phobia workshop. My name is Lee and I actually have a phobia myself.
+
+00:00:10.500 --> 00:00:17.500
+I have a fear of the word which is spelt A-A-G-H, exclamation mark. That word.
+
+00:00:17.500 --> 00:00:20.000
+Why don't you tell me about yourselves? Starting with you.
+
+00:00:20.000 --> 00:00:23.000
+Hi everyone, my name is Jim, and I have a fear of apologies.
+
+00:00:23.000 --> 00:00:23.500
+Sorry?
+
+00:00:23.500 --> 00:00:24.000
+Aagh!
+
+00:00:24.000 --> 00:00:24.500
+Aagh!
+
+00:00:24.500 --> 00:00:25.000
+Aagh!
+
+00:00:25.000 --> 00:00:26.000
+Aagh!
+
+00:00:26.000 --> 00:00:27.000
+Oh, apologies, sorry.
+
+00:00:27.000 --> 00:00:27.500
+Aagh!
+
+00:00:27.500 --> 00:00:28.000
+Aagh!
+
+00:00:28.000 --> 00:00:28.500
+Aagh!
+
+00:00:28.500 --> 00:00:32.500
+Aagh! Is it any sort of apology?
+
+00:00:32.500 --> 00:00:33.000
+Yes.
+
+00:00:33.000 --> 00:00:39.500
+Right, we'll try and avoid them, shall we? What's your problem?
+
+00:00:39.500 --> 00:00:44.500
+My name is Karen and I have a fear of repetition.
+
+00:00:44.500 --> 00:00:51.000
+Oh, you have a fear of... I almost said it there, didn't I? I'm very sor... and you are?
+
+00:00:51.000 --> 00:00:56.500
+My name is Ronni, and I have a fear of awkward silences.
+
+00:00:56.500 --> 00:01:02.500
+How long do these silences have to be? There was borderline that one.
+
+00:01:02.500 --> 00:01:10.500
+Let's try and keep the conversation flowing, shall we?
+
+00:01:10.500 --> 00:01:13.500
+Hello, I'm Tim. Sorry I'm late.
+
+00:01:13.500 --> 00:01:14.000
+Aagh!
+
+00:01:14.000 --> 00:01:14.500
+Aagh!
+
+00:01:14.500 --> 00:01:15.000
+Aagh!
+
+00:01:15.000 --> 00:01:15.500
+Aagh!
+
+00:01:15.500 --> 00:01:16.500
+Woof!
+
+00:01:16.500 --> 00:01:21.000
+That's OK. Let me introduce you to everybody. This is Karen. She has a fear of repetition.
+
+00:01:21.000 --> 00:01:22.500
+I'm so sorry.
+
+00:01:22.500 --> 00:01:23.000
+Aagh!
+
+00:01:23.000 --> 00:01:23.500
+Aagh!
+
+00:01:23.500 --> 00:01:24.000
+Aagh!
+
+00:01:24.000 --> 00:01:25.000
+Aagh!
+
+00:01:25.000 --> 00:01:26.000
+Woof!
+
+00:01:26.000 --> 00:01:27.000
+What's the matter with you?
+
+00:01:27.000 --> 00:01:29.000
+I bark at other people's phobias.
+
+00:01:29.000 --> 00:01:32.000
+I think I should have dealt with you on a one-to-one basis. You're here now.
+
+00:01:32.000 --> 00:01:37.000
+My name is Lee. I have a fear of the word which is spelt A-A-G-H, exclamation mark. That word.
+
+00:01:37.000 --> 00:01:40.000
+This is Ronni. She has a fear of awkward silences.
+
+00:01:40.000 --> 00:01:42.000
+So we'll try and keep the conversation flowing then.
+
+00:01:42.000 --> 00:01:42.500
+Aagh!
+
+00:01:42.500 --> 00:01:43.000
+Aagh!
+
+00:01:43.000 --> 00:01:44.000
+Woof!
+
+00:01:44.000 --> 00:01:45.000
+What?
+
+00:01:45.000 --> 00:01:46.000
+He said that earlier.
+
+00:01:46.000 --> 00:01:46.500
+Sorry.
+
+00:01:46.500 --> 00:01:47.000
+Aagh!
+
+00:01:47.000 --> 00:01:47.500
+Aagh!
+
+00:01:47.500 --> 00:01:48.000
+Aagh!
+
+00:01:48.000 --> 00:01:48.500
+Aagh!
+
+00:01:48.500 --> 00:01:49.500
+Woof!
+
+00:01:49.500 --> 00:01:53.000
+Can we just try and make some progress, please?
+
+00:01:53.000 --> 00:01:55.000
+This is Jim. He has a fear of apologies.
+
+00:01:55.000 --> 00:01:56.500
+I'm terribly sor...
+
+00:01:56.500 --> 00:02:01.500
+Jim, would you like to tell this group how this problem started?
+
+00:02:01.500 --> 00:02:06.500
+It all began when I first tried on my grandmother's stockings.
+
+00:02:06.500 --> 00:02:07.000
+Aagh!
+
+00:02:07.000 --> 00:02:07.500
+Aagh!
+
+00:02:07.500 --> 00:02:08.000
+Aagh!
+
+00:02:08.000 --> 00:02:09.000
+Aagh!
+
+00:02:09.000 --> 00:02:10.000
+Woof!
+
+00:02:10.000 --> 00:02:12.000
+Sorry. Aagh!`
+        },
+        {
+            id: 2,
+            title: "Basic Verbs: To Be",
+            level: "Intermediate",
+            source: "Mind Your Language",
+            file: "mindyourlanguageclip01.mp4",
+            desc: "Master the verb 'to be' with nationalities.",
+            summary: "Mr. Brown teaches 'I am', 'You are', 'He is'. He uses nationalities like English, Chinese, Italian, and French.",
+            phrases: [
+                { w: "I am", m: "Describe yourself.", e: "I am English." },
+                { w: "You are", m: "Describe listener.", e: "You are Chinese." },
+                { w: "He/She is", m: "Describe others.", e: "He is Italian. She is French." }
+            ],
+            tip: "Contractions: I'm, You're, He's.",
+            quiz: [
+                { q: "Which is correct?", opts: ["I is happy", "I am happy", "I are happy"], ans: 1 },
+                { q: "Form for 'They'?", opts: ["They is", "They are", "They am"], ans: 1 }
+            ],
+            speak: "I am English. You are Chinese. He is Italian.",
+            vtt: `WEBVTT
+
+00:00:00.000 --> 00:00:12.000
+We will start by learning a few basic English verbs. And firstly, we will take the verb to be.
+
+00:00:12.000 --> 00:00:25.000
+I am English. You are Chinese. He is Italian. She is French. He is barbarian.
+
+00:00:25.000 --> 00:00:29.000
+And you are asking for a kick up your big brown backside.
+
+00:00:29.000 --> 00:00:35.000
+Pay attention, please. I am. I am. You are.
+
+00:00:35.000 --> 00:00:48.000
+You are. He or it is. We are. You are. They are.`
+        },
+        {
+            id: 3,
+            title: "English Vinglish Clip 01",
+            level: "Intermediate",
+            source: "English Vinglish",
+            file: "ENGLISHVINGLISHCLIP01.mp4",
+            desc: "Learn to express determination and talk about the people and things you miss.",
+            summary: "Ramamurthy feels mocked for his English and decides to show his colleagues what he can do. He also says he misses his mother and idli while in America.",
+            phrases: [
+                { w: "teach them a lesson", m: "Show someone that their behavior has consequences.", e: "I want to teach the office people a big lesson." },
+                { w: "I will show them what I can do", m: "A confident way to say you will prove your ability.", e: "I will show them what I can do." },
+                { w: "I am missing two things terribly", m: "Say that you miss people or things very much.", e: "I am missing my mother and my idli terribly." }
+            ],
+            tip: "Use will + the base form of a verb to express a decision or intention: “I will show them.”",
+            quiz: [
+                {
+                    type: "multiple_choice",
+                    q: "What does Ramamurthy want to show his office colleagues?",
+                    hint: "Listen to what he says he will do.",
+                    opts: ["That he can do more than they think", "That he wants to leave America", "That he dislikes software"],
+                    ans: 0,
+                    explanation: "He says he will show them what he can do."
+                },
+                {
+                    type: "multiple_choice",
+                    q: "What two things does Ramamurthy miss in America?",
+                    hint: "He names a food and a family member.",
+                    opts: ["His friends and his job", "His mother and his idli", "His office and his English"],
+                    ans: 1,
+                    explanation: "He says he misses his idli and his mother."
+                }
+            ],
+            speak: "I will show them what I can do.",
+            vtt: `WEBVTT
+
+00:00:06.000 --> 00:00:32.000
+My deepest feeling is to teach them such a lesson, such a lesson, such a lesson. Who, Rama? Sorry, sorry, I want to teach the office people a big lesson. They are thinking, no, he is an idiot, only knowing the software, making fun of my behind, of my English.
+
+00:00:32.000 --> 00:00:51.000
+But now, I will show them that Ramamurthy is Mr. Ramamurthy. I will show them what I can do. America, big place, beautiful place, I am missing two things very, very terribly.
+
+00:00:51.000 --> 00:00:57.000
+My idli and my mother, my mother and my idli.`
+        },
+        {
+            id: 4,
+            title: "English Vinglish: A Father's Message",
+            level: "Advanced",
+            source: "English Vinglish",
+            file: "englishvinglishclip02.mp4",
+            desc: "Listen to a heartfelt message about family, love, and understanding.",
+            summary: "A parent reflects on Meera's difficult teenage years, remembers Anil, and explains why Meera and Kevin were so deeply wanted and loved.",
+            phrases: [
+                { w: "troubled teens", m: "A difficult or challenging period during someone's teenage years.", e: "She was going through her troubled teens." },
+                { w: "in a fit of rage", m: "While suddenly feeling very angry.", e: "In a fit of rage, she asked us a difficult question." },
+                { w: "I wish he was here", m: "A way to express that you miss someone who is absent.", e: "How I wish Anil was here." }
+            ],
+            tip: "Use “going through” to describe an experience or period of difficulty: “She was going through a hard time.”",
+            quiz: [
+                {
+                    type: "multiple_choice",
+                    q: "How old was Meera when she was going through her troubled teens?",
+                    hint: "The speaker mentions her age.",
+                    opts: ["12", "14", "16"],
+                    ans: 1,
+                    explanation: "The speaker says Meera was 14."
+                },
+                {
+                    type: "multiple_choice",
+                    q: "Why does the speaker say Meera and Kevin were born?",
+                    hint: "Listen to what their parents wanted to share.",
+                    opts: ["So their parents could share complete happiness", "So they could travel abroad", "So they could meet Anil"],
+                    ans: 0,
+                    explanation: "The speaker says they were born so their parents could share complete happiness."
+                }
+            ],
+            speak: "You were born so your dad and I could share complete happiness.",
+            vtt: `WEBVTT
+
+00:00:04.000 --> 00:00:16.000
+To my darling daughter Meera and my dear son Kevin. How I wish Anil was here. When Meera was going through her troubled teens, she was 14.
+
+00:00:18.000 --> 00:00:40.000
+He was only 14 years old. One day, in a fit of rage, he asked us both, “Why did you give birth to me?” She was so angry with life that she was furious that we gave birth to her without asking for her permission. I will answer that today, Meera.
+
+00:00:42.000 --> 00:00:57.000
+You were born, so your dad and I could share complete happiness. I am so sorry I didn't take your permission. Love you both, sweethearts.
+
+00:00:57.000 --> 00:00:59.000
+God bless both of you always.`
+        },
+        {
+            id: 5,
+            title: "English Vinglish: A Wedding Speech",
+            level: "Advanced",
+            source: "English Vinglish",
+            file: "englishvinglishclip04.mp4",
+            desc: "Learn language for marriage, family support, and well-wishes.",
+            summary: "The speaker celebrates Aditi and Rahul's marriage, welcoming both families and wishing the couple love, respect, and support through life's ups and downs.",
+            phrases: [
+                { w: "say a few words", m: "Give a short speech.", e: "I was asked to say a few words today." },
+                { w: "ups and downs", m: "The good and difficult moments in life.", e: "There will be ups and downs in every marriage." },
+                { w: "support system", m: "People who help and encourage you.", e: "Family and friends can be a strong support system." },
+                { w: "treat each other's families with respect", m: "Show care and respect to your partner's family.", e: "Treat each other's families with the same love and respect." }
+            ],
+            tip: "Use “ups and downs” to talk about both the good and difficult parts of an experience.",
+            quiz: [
+                {
+                    type: "multiple_choice",
+                    q: "What is the main occasion being celebrated in the video?",
+                    opts: ["A birthday party", "A wedding reception", "A graduation ceremony", "An anniversary dinner"],
+                    ans: 1,
+                    explanation: "The speaker is celebrating a wedding and the joining of two families."
+                },
+                {
+                    type: "multiple_choice",
+                    q: "According to the speaker, what does marriage involve besides two people coming together?",
+                    opts: ["Two careers merging", "Two families coming together", "Two bank accounts combining", "Two houses becoming one"],
+                    ans: 1,
+                    explanation: "The speaker says marriage is also about two families coming together."
+                },
+                {
+                    type: "multiple_choice",
+                    q: "What phrase does the speaker use to describe the inevitable challenges in a marriage?",
+                    opts: ["Storms and sunshine", "Peaks and valleys", "Ups and downs", "Highs and lows"],
+                    ans: 2,
+                    explanation: "The speaker says there will be ups and downs and disagreements."
+                },
+                {
+                    type: "multiple_choice",
+                    q: "What is the speaker's specific wish for the couple regarding their in-laws?",
+                    opts: [
+                        "To visit them only on holidays",
+                        "To treat them with the same love and respect as their own families",
+                        "To maintain strict boundaries with them",
+                        "To rely on them for financial support"
+                    ],
+                    ans: 1,
+                    explanation: "The speaker wishes they will treat each other's families with the same love and respect as their own."
+                },
+                {
+                    type: "multiple_choice",
+                    q: "How do the male guests at the table primarily react to the speech?",
+                    opts: [
+                        "They appear bored and distracted",
+                        "They laugh loudly throughout",
+                        "They look moved, emotional, and attentive",
+                        "They start whispering to each other"
+                    ],
+                    ans: 2,
+                    explanation: "They appear moved and attentive as they listen to the speech."
+                }
+            ],
+            speak: "You are not just marrying each other, but you are also marrying into each other's families.",
+            vtt: `WEBVTT
+
+00:00:07.000 --> 00:00:13.000
+Hello everyone. I'm so happy to see you all here today.
+
+00:00:13.000 --> 00:00:20.000
+Thank you for coming. Thank you.
+
+00:00:20.000 --> 00:00:36.000
+You know, when I was asked to say a few words today, I thought, what can I possibly say that hasn't already been said? But then I realized, there's one thing that needs to be said.
+
+00:00:36.000 --> 00:00:45.000
+And that is... marriage is not just about two people coming together. It's about two families coming together.
+
+00:00:45.000 --> 00:00:58.000
+And today, we are not just celebrating the union of Aditi and Rahul, but also the union of our two families.
+
+00:00:58.000 --> 00:01:12.000
+And I must say, looking at both your families, I feel very blessed. Because you are all such wonderful people.
+
+00:01:12.000 --> 00:01:25.000
+And I know that Aditi and Rahul are going to have a very strong support system around them.
+
+00:01:25.000 --> 00:01:38.000
+Because marriage is not always easy. There will be ups and downs. There will be disagreements.
+
+00:01:38.000 --> 00:01:58.000
+But if you have the love and support of your family and friends, you can get through anything.
+
+00:01:58.000 --> 00:02:11.000
+So, my wish for you both is that you always remember that you are not just marrying each other, but you are also marrying into each other's families.
+
+00:02:11.000 --> 00:02:26.000
+And that you will always treat each other's families with the same love and respect that you treat your own.
+
+00:02:26.000 --> 00:02:27.000
+Thank you.`
+        }
+    ];
+
+    let user = { 
+        name: "Learner", 
+        level: "Beginner", 
+        lessons: 0, 
+        points: 0,
+        completedLessons: [],
+        avatar: "",
+        history: []
+    };
+    const userStorageKey = 'bolchaal-user-progress';
+    try {
+        localStorage.removeItem(userStorageKey);
+    } catch (error) {
+        console.warn('Saved Bolchaal profile data could not be cleared.', error);
+    }
+    let currentLessonIdx = 0;
+    let isAdmin = false;
+    let parsedCaptions = [];
+    let videoWatchedUntil = 0;
+    let videoCompleted = false;
+    let completedVocabularyItems = new Set();
+    let quizAnswers = [];
+    let quizSelections = [];
+    let quizCompleted = false;
+    let lessonPoints = 10;
+    let lessonMistakes = [];
+    const quizCorrectPoints = 5;
+    const quizWrongPenalty = 2;
+    let speakingCompleted = false;
+    const dictionaryAccents = [
+        { flag: '🇺🇸', label: 'US English', locale: 'en-US' },
+        { flag: '🇬🇧', label: 'British English', locale: 'en-GB' },
+        { flag: '🇫🇷', label: 'French', locale: 'fr-FR' },
+        { flag: '🇩🇪', label: 'German', locale: 'de-DE' },
+        { flag: '🇮🇹', label: 'Italian', locale: 'it-IT' },
+        { flag: '🇨🇳', label: 'Chinese / Mandarin', locale: 'zh-CN' },
+        { flag: '🇯🇵', label: 'Japanese', locale: 'ja-JP' },
+        { flag: '🇷🇺', label: 'Russian', locale: 'ru-RU' }
+    ];
+    let dictionaryRequestController = null;
+    let dictionaryAudio = null;
+    let dictionarySequenceTimer = null;
+    let dictionarySequenceId = 0;
+    let currentDictionaryWord = '';
+    let isPlayingAllAccents = false;
+
+    const lessonVideo = document.getElementById('main-video');
+    lessonVideo.addEventListener('timeupdate', trackVideoProgress);
+    lessonVideo.addEventListener('seeking', preventVideoSkip);
+    lessonVideo.addEventListener('ended', completeVideoWatch);
+    document.getElementById('welcome-bird-button').addEventListener('click', event => {
+        const button = event.currentTarget;
+        button.classList.remove('flap');
+        void button.offsetWidth;
+        button.classList.add('flap');
+        button.addEventListener('animationend', () => button.classList.remove('flap'), { once: true });
+    });
+
+    document.getElementById('profile-photo-input').addEventListener('change', handleProfilePhoto);
+
+    function updateProfileAvatars() {
+        document.querySelectorAll('.profile-avatar-image').forEach(image => {
+            image.hidden = !user.avatar;
+            if (user.avatar) image.src = user.avatar;
+        });
+    }
+
+    function handleProfilePhoto(event) {
+        const file = event.target.files && event.target.files[0];
+        const status = document.getElementById('profile-photo-status');
+        if (!file) return;
+        if (!file.type.startsWith('image/')) {
+            status.textContent = 'Choose an image file to use as your profile photo.';
+            event.target.value = '';
+            return;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+            status.textContent = 'That image is larger than 10 MB. Choose a smaller file.';
+            event.target.value = '';
+            return;
+        }
+        const reader = new FileReader();
+        reader.onerror = () => {
+            status.textContent = 'The selected image could not be read. Please try another file.';
+        };
+        reader.onload = () => {
+            const image = new Image();
+            image.onerror = () => {
+                status.textContent = 'The selected image could not be opened. Please try another file.';
+            };
+            image.onload = () => {
+                const canvas = document.createElement('canvas');
+                const scale = Math.min(1, 256 / Math.max(image.naturalWidth, image.naturalHeight));
+                canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+                canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+                const context = canvas.getContext('2d');
+                if (!context) {
+                    status.textContent = 'Your browser could not prepare that image.';
+                    return;
+                }
+                context.drawImage(image, 0, 0, canvas.width, canvas.height);
+                user.avatar = canvas.toDataURL('image/jpeg', 0.82);
+                updateProfileAvatars();
+                status.textContent = 'Profile photo updated.';
+            };
+            image.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function parseVTT(vttString) {
+        const lines = vttString.trim().split('\n');
+        const captions = [];
+        let i = 0;
+        while (i < lines.length && !lines[i].includes('-->')) i++;
+        while (i < lines.length) {
+            if (lines[i].includes('-->')) {
+                const timeParts = lines[i].split(' --> ');
+                const start = parseTime(timeParts[0].trim());
+                const end = parseTime(timeParts[1].trim());
+                i++;
+                let text = '';
+                while (i < lines.length && lines[i].trim() !== '') {
+                    text += (text ? ' ' : '') + lines[i].trim();
+                    i++;
+                }
+                if (text) captions.push({ start, end, text });
+            }
+            i++;
+        }
+        return captions;
+    }
+
+    function parseTime(timeStr) {
+        const parts = timeStr.split(':');
+        if (parts.length === 3) return parseFloat(parts[0]) * 3600 + parseFloat(parts[1]) * 60 + parseFloat(parts[2]);
+        return 0;
+    }
+
+    function updateCaption() {
+        const video = document.getElementById('main-video');
+        const captionEl = document.getElementById('caption-text');
+        const currentTime = video.currentTime;
+        const activeCaption = parsedCaptions.find(c => currentTime >= c.start && currentTime < c.end);
+        if (activeCaption) {
+            captionEl.textContent = activeCaption.text;
+            captionEl.classList.remove('empty');
+        } else {
+            captionEl.textContent = '...';
+            captionEl.classList.add('empty');
+        }
+    }
+
+    function trackVideoProgress() {
+        if (!lessonVideo.paused) {
+            videoWatchedUntil = Math.max(videoWatchedUntil, lessonVideo.currentTime);
+        }
+    }
+
+    function preventVideoSkip() {
+        if (isAdmin) return;
+        if (lessonVideo.currentTime > videoWatchedUntil + 1.5) {
+            lessonVideo.currentTime = videoWatchedUntil;
+            alert("Please watch the video in order before continuing.");
+        }
+    }
+
+    function completeVideoWatch() {
+        if (Number.isFinite(lessonVideo.duration) && lessonVideo.currentTime >= lessonVideo.duration - 0.5) {
+            videoCompleted = true;
+            document.getElementById('continue-from-video').disabled = false;
+            document.getElementById('video-status').textContent = "Video complete. Review optional phrases or go straight to the quiz.";
+            openPhrasePrompt();
+        }
+    }
+
+    function openPhrasePrompt() {
+        if (!videoCompleted && !isAdmin) return;
+        if (isAdmin) {
+            document.getElementById('main-video').pause();
+            videoCompleted = true;
+        }
+        const container = document.getElementById('phrase-prompt-list');
+        container.replaceChildren();
+        lessons[currentLessonIdx].phrases.forEach(phrase => {
+            const card = document.createElement('div');
+            card.className = 'phrase-card';
+            const word = document.createElement('strong');
+            word.textContent = phrase.w;
+            const meaning = document.createElement('p');
+            meaning.textContent = phrase.m;
+            meaning.style.margin = '6px 0';
+            const example = document.createElement('p');
+            example.textContent = `“${phrase.e}”`;
+            example.style.margin = '0';
+            const hear = document.createElement('button');
+            hear.type = 'button';
+            hear.className = 'btn btn-secondary';
+            hear.style.cssText = 'width:auto; padding:7px 12px; margin:10px 0 0; font-size:12px;';
+            hear.textContent = 'Hear phrase';
+            hear.addEventListener('click', () => speakText(phrase.w));
+            card.append(word, meaning, example, hear);
+            container.append(card);
+        });
+        document.getElementById('phrase-prompt').hidden = false;
+        document.getElementById('app').scrollTop = 0;
+    }
+
+    function startQuizFromPrompt() {
+        document.getElementById('phrase-prompt').hidden = true;
+        goTo('p-quiz');
+    }
+
+    function isVocabularyComplete() {
+        return completedVocabularyItems.size === lessons[currentLessonIdx].phrases.length;
+    }
+
+    function updateVocabularyProgress() {
+        const total = lessons[currentLessonIdx].phrases.length;
+        const complete = isVocabularyComplete();
+        document.getElementById('continue-from-vocabulary').disabled = !complete;
+        document.getElementById('vocabulary-status').textContent = complete
+            ? "All phrases practised. You can continue."
+            : `Practised ${completedVocabularyItems.size} of ${total} phrases. Tap Hear on each one to continue.`;
+    }
+
+    function markPhraseHeard(phraseIdx, button) {
+        const phrase = lessons[currentLessonIdx].phrases[phraseIdx];
+        if (!phrase) return;
+        speakText(phrase.w);
+        completedVocabularyItems.add(phraseIdx);
+        button.textContent = "✓ Heard - tap to replay";
+        button.classList.add('correct');
+        updateVocabularyProgress();
+    }
+
+    function updateQuizProgress() {
+        quizCompleted = quizAnswers.every(answer => answer === true);
+        document.getElementById('continue-from-quiz').disabled = !quizCompleted;
+        document.getElementById('quiz-status').textContent = quizCompleted
+            ? "All answers are correct. You can continue."
+            : `Answer every question correctly to continue (${quizAnswers.filter(Boolean).length} of ${quizAnswers.length} correct).`;
+    }
+
+    function updateLessonPoints() {
+        document.getElementById('quiz-points').textContent = lessonPoints;
+    }
+
+    function answerQuiz(questionIdx, optionIdx, optionEl) {
+        const question = lessons[currentLessonIdx].quiz[questionIdx];
+        const questionEl = document.getElementById(`quiz-question-${questionIdx}`);
+        if (!question || !questionEl || quizAnswers[questionIdx] === true) return;
+
+        const options = questionEl.querySelectorAll('.option-item');
+        options.forEach(option => option.classList.remove('selected', 'correct', 'incorrect'));
+        const isCorrect = optionIdx === question.ans;
+        if (!isCorrect) void optionEl.offsetWidth;
+        optionEl.classList.add('selected');
+        optionEl.classList.add(isCorrect ? 'correct' : 'incorrect');
+        completeQuizQuestion(questionIdx, isCorrect);
+    }
+
+    function completeQuizQuestion(questionIdx, isCorrect) {
+        const question = lessons[currentLessonIdx].quiz[questionIdx];
+        const questionEl = document.getElementById(`quiz-question-${questionIdx}`);
+        if (!question || !questionEl || quizAnswers[questionIdx] === true) return;
+        const feedback = questionEl.querySelector('.quiz-feedback');
+        quizAnswers[questionIdx] = isCorrect;
+        if (!isCorrect) lessonMistakes.push(question.q);
+        lessonPoints = Math.max(0, lessonPoints + (isCorrect ? quizCorrectPoints : -quizWrongPenalty));
+        updateLessonPoints();
+        feedback.textContent = isCorrect
+            ? `+${quizCorrectPoints} points. ${question.explanation || "Correct."}`
+            : `-${quizWrongPenalty} points. Not quite. Try again.`;
+        feedback.style.color = isCorrect ? "#047857" : "#B91C1C";
+        if (isCorrect) {
+            questionEl.querySelectorAll('button, input, select').forEach(control => {
+                control.disabled = true;
+            });
+        }
+        updateQuizProgress();
+    }
+
+    function selectSentenceWord(questionIdx, wordIdx, button) {
+        if (quizAnswers[questionIdx] || quizSelections[questionIdx].includes(wordIdx)) return;
+        quizSelections[questionIdx].push(wordIdx);
+        button.disabled = true;
+        const question = lessons[currentLessonIdx].quiz[questionIdx];
+        const selectedWords = quizSelections[questionIdx].map(idx => question.words[idx]);
+        document.getElementById(`sentence-result-${questionIdx}`).textContent = selectedWords.join(" ");
+    }
+
+    function resetSentenceBuilder(questionIdx) {
+        if (quizAnswers[questionIdx]) return;
+        quizSelections[questionIdx] = [];
+        const questionEl = document.getElementById(`quiz-question-${questionIdx}`);
+        questionEl.querySelectorAll('.sentence-word').forEach(button => {
+            button.disabled = false;
+        });
+        document.getElementById(`sentence-result-${questionIdx}`).textContent = "";
+    }
+
+    function checkSentenceBuilder(questionIdx) {
+        const question = lessons[currentLessonIdx].quiz[questionIdx];
+        const selectedWords = quizSelections[questionIdx].map(idx => question.words[idx]);
+        if (selectedWords.length !== question.sequence.length) return;
+        const isCorrect = selectedWords.every((word, idx) => word === question.sequence[idx]);
+        completeQuizQuestion(questionIdx, isCorrect);
+        if (!isCorrect) resetSentenceBuilder(questionIdx);
+    }
+
+    function checkMatching(questionIdx) {
+        const question = lessons[currentLessonIdx].quiz[questionIdx];
+        const questionEl = document.getElementById(`quiz-question-${questionIdx}`);
+        const selections = Array.from(questionEl.querySelectorAll('select'));
+        if (selections.some(select => select.value === "")) return;
+        const isCorrect = selections.every((select, idx) => select.value === String(idx));
+        completeQuizQuestion(questionIdx, isCorrect);
+    }
+
+    function submitOpenEnded(questionIdx) {
+        const questionEl = document.getElementById(`quiz-question-${questionIdx}`);
+        const answer = questionEl.querySelector('input').value.trim();
+        if (answer) completeQuizQuestion(questionIdx, true);
+    }
+
+    function goTo(pageId) {
+        if (isAdmin && (pageId === 'p-transcript' || pageId === 'p-quiz')) {
+            document.getElementById('main-video').pause();
+            videoCompleted = true;
+        }
+        if (pageId === 'p-transcript' && !videoCompleted && !isAdmin) {
+            alert("Watch the full video before continuing.");
+            return;
+        }
+        if (pageId === 'p-quiz' && !videoCompleted && !isAdmin) {
+            alert("Watch the full video before continuing to the quiz.");
+            return;
+        }
+        if (pageId === 'p-speaking' && !quizCompleted) {
+            alert("Answer every quiz question correctly before continuing.");
+            return;
+        }
+        if (pageId === 'p-feedback' && !speakingCompleted) {
+            alert("Complete the speaking practice before continuing.");
+            return;
+        }
+        if (pageId === 'p-complete' && !user.completedLessons.includes(currentLessonIdx)) {
+            alert("Finish the lesson steps before completing this lesson.");
+            return;
+        }
+        if (pageId !== 'p-dictionary' && document.getElementById('p-dictionary').classList.contains('active')) {
+            stopDictionaryPlayback();
+            if (dictionaryRequestController) {
+                dictionaryRequestController.abort();
+                dictionaryRequestController = null;
+                document.getElementById('dictionary-status').textContent = 'Lookup cancelled.';
+            }
+        }
+        const navItems = document.querySelectorAll('.nav-item');
+        const previousNavIndex = Array.from(navItems).findIndex(item => item.classList.contains('active'));
+        const navIndex = { 'p-home': 0, 'p-progress': 1, 'p-profile': 2, 'p-about': 3 }[pageId];
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        document.querySelector('.bottom-nav').classList.toggle('visible', ['p-home', 'p-progress', 'p-profile', 'p-about'].includes(pageId));
+        navItems.forEach(item => item.classList.remove('active'));
+        if (navIndex !== undefined) {
+            navItems[navIndex].classList.add('active');
+            moveNavIndicator(navIndex, previousNavIndex >= 0 && previousNavIndex !== navIndex, previousNavIndex);
+        }
+        if(pageId === 'p-home') {
+            renderHome();
+        }
+        if (pageId === 'p-progress') {
+            document.getElementById('prog-lessons').innerText = user.lessons;
+            document.getElementById('prog-points').innerText = user.points;
+        }
+        if (pageId === 'p-profile') renderProfile();
+        document.getElementById('app').scrollTop = 0;
+        window.scrollTo(0,0);
+    }
+
+    const adminAccessButton = document.getElementById('admin-access-button');
+    const adminModal = document.getElementById('admin-modal');
+    const adminPassword = document.getElementById('admin-password');
+    const adminError = document.getElementById('admin-error');
+    const entryRoleModal = document.getElementById('entry-role-modal');
+    const entryAdminYes = document.getElementById('entry-admin-yes');
+    let adminEntryPending = false;
+
+    function continueToSetup() {
+        entryRoleModal.hidden = true;
+        goTo('p-setup');
+        document.getElementById('username-input').focus();
+    }
+
+    function continueAsLearner() {
+        isAdmin = false;
+        continueToSetup();
+    }
+
+    function beginEntryFlow() {
+        entryRoleModal.hidden = false;
+        entryAdminYes.focus();
+    }
+
+    function openAdminPassword(fromEntry) {
+        adminEntryPending = fromEntry;
+        entryRoleModal.hidden = true;
+        adminModal.hidden = false;
+        adminPassword.value = '';
+        adminError.textContent = '';
+        adminPassword.focus();
+    }
+
+    function closeAdminModal() {
+        adminModal.hidden = true;
+        adminPassword.value = '';
+        adminError.textContent = '';
+        adminEntryPending = false;
+        adminAccessButton.focus();
+    }
+
+    document.getElementById('entry-continue-as-learner').addEventListener('click', continueAsLearner);
+    entryAdminYes.addEventListener('click', () => openAdminPassword(true));
+    adminAccessButton.addEventListener('click', () => openAdminPassword(false));
+    document.getElementById('admin-go-back').addEventListener('click', () => {
+        if (!adminEntryPending) {
+            closeAdminModal();
+            return;
+        }
+        adminModal.hidden = true;
+        adminPassword.value = '';
+        adminError.textContent = '';
+        adminEntryPending = false;
+        entryRoleModal.hidden = false;
+        entryAdminYes.focus();
+    });
+    document.getElementById('admin-access-form').addEventListener('submit', event => {
+        event.preventDefault();
+        if (adminPassword.value === '123456') {
+            const fromEntry = adminEntryPending;
+            isAdmin = true;
+            adminModal.hidden = true;
+            adminPassword.value = '';
+            adminError.textContent = '';
+            adminEntryPending = false;
+            if (fromEntry) {
+                continueToSetup();
+            } else {
+                adminAccessButton.focus();
+                goTo('p-welcome');
+            }
+            return;
+        }
+        adminError.textContent = 'Incorrect password';
+        adminPassword.focus();
+    });
+
+    function moveNavIndicator(targetIndex, animate, startNavIndex) {
+        const nav = document.querySelector('.bottom-nav');
+        const indicator = nav.querySelector('.nav-indicator');
+        const navItems = nav.querySelectorAll('.nav-item');
+        const target = navItems[targetIndex];
+        if (!nav.classList.contains('visible') || !target) return;
+
+        const navRect = nav.getBoundingClientRect();
+        const targetRect = target.getBoundingClientRect();
+        const endX = targetRect.left - navRect.left;
+        const endY = targetRect.top - navRect.top;
+        const animations = indicator.getAnimations();
+
+        if (!animate || !indicator.dataset.positioned) {
+            animations.forEach(animation => animation.cancel());
+            indicator.style.width = `${targetRect.width}px`;
+            indicator.style.height = `${targetRect.height}px`;
+            indicator.style.transform = `translate3d(${endX}px, ${endY}px, 0)`;
+            indicator.dataset.positioned = 'true';
+            return;
+        }
+
+        const currentRect = indicator.getBoundingClientRect();
+        const startX = currentRect.left - navRect.left;
+        const startY = currentRect.top - navRect.top;
+        const startWidth = currentRect.width;
+        const startHeight = currentRect.height;
+        animations.forEach(animation => animation.cancel());
+
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            indicator.style.width = `${targetRect.width}px`;
+            indicator.style.height = `${targetRect.height}px`;
+            indicator.style.transform = `translate3d(${endX}px, ${endY}px, 0)`;
+            return;
+        }
+
+        const startItem = navItems[startNavIndex];
+        const startItemRect = startItem && startItem.getBoundingClientRect();
+        const indicatorIsAtStart = startItemRect
+            && Math.abs((currentRect.left + currentRect.right) / 2 - (startItemRect.left + startItemRect.right) / 2) < 1;
+        if (indicatorIsAtStart && Math.abs(targetIndex - startNavIndex) > 1) {
+            const direction = Math.sign(targetIndex - startNavIndex);
+            const waypoints = [];
+            for (let index = startNavIndex + direction; index !== targetIndex + direction; index += direction) {
+                const itemRect = navItems[index].getBoundingClientRect();
+                waypoints.push({
+                    x: itemRect.left - navRect.left,
+                    y: itemRect.top - navRect.top,
+                    width: itemRect.width,
+                    height: itemRect.height
+                });
+            }
+
+            const frames = [{
+                transform: `translate3d(${startX}px, ${startY}px, 0) scale(1)`,
+                width: `${startWidth}px`,
+                height: `${startHeight}px`,
+                offset: 0
+            }];
+            waypoints.forEach((point, index) => {
+                const arrival = (index + 1) / waypoints.length;
+                const shrink = arrival - 0.5 / waypoints.length;
+                frames.push({
+                    transform: `translate3d(${point.x}px, ${point.y}px, 0) scale(0.5)`,
+                    width: `${point.width}px`,
+                    height: `${point.height}px`,
+                    offset: shrink,
+                    easing: 'cubic-bezier(0.65, 0, 0.35, 1)'
+                });
+                frames.push({
+                    transform: `translate3d(${point.x}px, ${point.y}px, 0) scale(1)`,
+                    width: `${point.width}px`,
+                    height: `${point.height}px`,
+                    offset: arrival,
+                    easing: 'cubic-bezier(0.65, 0, 0.35, 1)'
+                });
+            });
+
+            indicator.style.width = `${targetRect.width}px`;
+            indicator.style.height = `${targetRect.height}px`;
+            indicator.style.transform = `translate3d(${endX}px, ${endY}px, 0)`;
+            indicator.dataset.positioned = 'true';
+            const animation = indicator.animate(frames, { duration: 560, easing: 'linear' });
+            animation.onfinish = () => {
+                animation.cancel();
+            };
+            return;
+        }
+
+        const middleWidth = (startWidth + targetRect.width) / 2;
+        const middleX = (startX + endX) / 2;
+        indicator.style.width = `${targetRect.width}px`;
+        indicator.style.height = `${targetRect.height}px`;
+        indicator.style.transform = `translate3d(${endX}px, ${endY}px, 0)`;
+        indicator.dataset.positioned = 'true';
+        const animation = indicator.animate([
+            {
+                transform: `translate3d(${startX}px, ${startY}px, 0) scale(1)`,
+                width: `${startWidth}px`,
+                height: `${startHeight}px`,
+                offset: 0
+            },
+            {
+                transform: `translate3d(${middleX}px, ${(startY + endY) / 2}px, 0) scale(0.5)`,
+                width: `${middleWidth}px`,
+                height: `${(startHeight + targetRect.height) / 2}px`,
+                offset: 0.5
+            },
+            {
+                transform: `translate3d(${endX}px, ${endY}px, 0) scale(1)`,
+                width: `${targetRect.width}px`,
+                height: `${targetRect.height}px`,
+                offset: 1
+            }
+        ], { duration: 560, easing: 'cubic-bezier(0.65, 0, 0.35, 1)' });
+
+        animation.onfinish = () => {
+            animation.cancel();
+        };
+    }
+
+    window.addEventListener('resize', () => {
+        const activeNavIndex = Array.from(document.querySelectorAll('.nav-item')).findIndex(item => item.classList.contains('active'));
+        if (activeNavIndex >= 0) moveNavIndicator(activeNavIndex, false);
+    });
+
+    function selectOption(el) {
+        const siblings = el.parentElement.querySelectorAll('.option-item');
+        siblings.forEach(s => s.classList.remove('selected'));
+        el.classList.add('selected');
+    }
+
+    function completeSetup() {
+        const nameInput = document.getElementById('username-input').value;
+        if(nameInput.trim()) user.name = nameInput.trim();
+        document.getElementById('display-name').innerText = user.name;
+        updateGreeting();
+        goTo('p-home');
+    }
+
+    function updateGreeting() {
+        const hour = new Date().getHours();
+        let greeting = "Good morning";
+        if (hour >= 12 && hour < 17) greeting = "Good afternoon";
+        else if (hour >= 17) greeting = "Good evening";
+        document.getElementById('greeting-text').innerText = greeting + ",";
+    }
+
+    function renderHome() {
+        const recContainer = document.getElementById('recommended-container');
+        const moreContainer = document.getElementById('more-lessons-container');
+        recContainer.innerHTML = '';
+        moreContainer.innerHTML = '';
+        const nextLesson = lessons.find(l => !user.completedLessons.includes(l.id));
+        const recommended = nextLesson || lessons[0];
+        recContainer.innerHTML = `
+            <div class="glass-card" style="border: 2px solid rgba(32, 73, 125, 0.2);">
+                <div class="lesson-badges">
+                    <span class="tag">Recommended</span>
+                    <span class="tag lesson-level level-${recommended.level.toLowerCase()}">${recommended.level}</span>
+                </div>
+                <h3>${recommended.title}</h3>
+                <p>${recommended.desc}</p>
+                <button class="btn btn-primary" onclick="startLesson(${recommended.id})">Start Lesson</button>
+            </div>
+        `;
+        lessons.forEach((l, idx) => {
+            if(l.id === recommended.id) return;
+            const isCompleted = user.completedLessons.includes(l.id);
+            const isLocked = !isCompleted && !isLessonUnlocked(idx);
+            if(isLocked) {
+                moreContainer.innerHTML += `
+                    <div class="glass-card locked-card">
+                        <div class="lock-badge">🔒 Locked</div>
+                        <span class="tag lesson-level level-${l.level.toLowerCase()}">${l.level}</span>
+                        <h3>${l.title}</h3>
+                        <p>Complete the previous lesson to unlock this one.</p>
+                    </div>
+                `;
+            } else {
+                moreContainer.innerHTML += `
+                    <div class="glass-card" onclick="startLesson(${l.id})" style="cursor:pointer;">
+                        <span class="tag lesson-level level-${l.level.toLowerCase()}">${l.level}</span>
+                        <h3>${l.title}</h3>
+                        <p>${l.desc}</p>
+                    </div>
+                `;
+            }
+        });
+        document.getElementById('stat-lessons').innerText = user.lessons;
+        document.getElementById('stat-level').innerText = user.level;
+        updateProfileAvatars();
+    }
+
+    function isLessonUnlocked(idx) {
+        return isAdmin || lessons.slice(0, idx).every(lesson => user.completedLessons.includes(lesson.id));
+    }
+
+    function startLesson(idx) {
+        if(!isLessonUnlocked(idx)) {
+            alert("This lesson is locked. Complete the previous lesson to unlock it.");
+            return;
+        }
+        currentLessonIdx = idx;
+        const l = lessons[idx];
+        const video = document.getElementById('main-video');
+        video.pause();
+        video.removeAttribute('src');
+        const videoSource = document.getElementById('lesson-video-source');
+        videoSource.src = new URL(l.file, document.baseURI).href;
+        videoWatchedUntil = 0;
+        videoCompleted = isAdmin;
+        completedVocabularyItems = new Set();
+        const captionText = document.getElementById('caption-text');
+        captionText.textContent = '...';
+        captionText.classList.add('empty');
+        lessonPoints = 10;
+        lessonMistakes = [];
+        document.getElementById('phrase-prompt').hidden = true;
+        updateLessonPoints();
+        quizAnswers = [];
+        quizCompleted = false;
+        speakingCompleted = false;
+        const continueButton = document.getElementById('continue-from-video');
+        continueButton.disabled = !isAdmin;
+        continueButton.textContent = isAdmin ? 'Skip Video & Continue' : 'Continue to Quiz';
+        document.getElementById('video-status').textContent = "Watch the full video to continue.";
+        parsedCaptions = parseVTT(l.vtt);
+        video.removeEventListener('timeupdate', updateCaption);
+        video.addEventListener('timeupdate', updateCaption);
+        video.onerror = () => {
+            document.getElementById('video-status').textContent =
+                "The video couldn't be loaded. Check that the video file is available beside this page.";
+        };
+        video.load();
+        document.getElementById('lesson-tag').innerText = `${l.level} - Lesson ${idx + 1}`;
+        document.getElementById('clip-title').innerText = l.title;
+        document.getElementById('transcript-summary').innerText = l.summary;
+        document.getElementById('lang-tip').innerText = l.tip;
+        const pContainer = document.getElementById('phrases-container');
+        pContainer.innerHTML = '';
+        l.phrases.forEach((p, phraseIdx) => {
+            pContainer.innerHTML += `
+                <div class="phrase-card">
+                    <div class="phrase-word">${p.w}</div>
+                    <div class="phrase-meaning">${p.m}</div>
+                    <div class="phrase-example">"${p.e}"</div>
+                    <button class="btn btn-secondary" style="padding:6px 14px; font-size:12px; margin-top:10px; width:auto;" onclick="markPhraseHeard(${phraseIdx}, this)">🔊 Hear</button>
+                </div>
+            `;
+        });
+        updateVocabularyProgress();
+        const qContainer = document.getElementById('quiz-container');
+        qContainer.innerHTML = '';
+        quizAnswers = l.quiz.map(() => false);
+        quizSelections = l.quiz.map(() => []);
+        l.quiz.forEach((q, i) => {
+            let html = `<div class="glass-card" id="quiz-question-${i}"><h3>${i+1}. ${q.q}</h3>`;
+            if (q.hint) html += `<p>${q.hint}</p>`;
+            if (!q.type || q.type === "multiple_choice") {
+                q.opts.forEach((opt, optionIdx) => {
+                    html += `<div class="option-item" onclick="answerQuiz(${i}, ${optionIdx}, this)">${opt}</div>`;
+                });
+            } else if (q.type === "sentence_builder") {
+                html += `<div id="sentence-result-${i}" class="phrase-card" aria-live="polite"></div><div>`;
+                q.words.forEach((word, wordIdx) => {
+                    html += `<button type="button" class="btn btn-secondary sentence-word" style="width:auto; display:inline-flex; padding:10px 14px; margin:0 6px 8px 0;" onclick="selectSentenceWord(${i}, ${wordIdx}, this)">${word}</button>`;
+                });
+                html += `</div><button type="button" class="btn btn-primary" onclick="checkSentenceBuilder(${i})">Check sentence</button><button type="button" class="btn btn-secondary" onclick="resetSentenceBuilder(${i})">Start again</button>`;
+            } else if (q.type === "matching") {
+                const meanings = q.pairs.map(pair => pair.right);
+                q.pairs.forEach(pair => {
+                    html += `<label style="display:block; margin:12px 0;">${pair.left}<select style="display:block; width:100%; padding:12px; margin-top:6px; border-radius:12px;">`;
+                    html += `<option value="">Choose a meaning</option>`;
+                    meanings.forEach((meaning, meaningIdx) => {
+                        html += `<option value="${meaningIdx}">${meaning}</option>`;
+                    });
+                    html += `</select></label>`;
+                });
+                html += `<button type="button" class="btn btn-primary" onclick="checkMatching(${i})">Check matches</button>`;
+            } else if (q.type === "open_ended") {
+                html += `<input type="text" aria-label="Your answer" placeholder="Type your answer" style="width:100%; padding:14px; border:1px solid #D1D5DB; border-radius:12px; margin-bottom:12px;"><button type="button" class="btn btn-primary" onclick="submitOpenEnded(${i})">Submit answer</button>`;
+            }
+            html += `<p class="quiz-feedback" aria-live="polite"></p></div>`;
+            qContainer.innerHTML += html;
+        });
+        updateQuizProgress();
+        document.getElementById('speaking-prompt').innerText = l.speak;
+        goTo('p-clip');
+    }
+
+    function finishLesson() {
+        if (!videoCompleted || !quizCompleted || !speakingCompleted) {
+            alert("Complete the video, quiz, and speaking practice before finishing.");
+            return;
+        }
+        const isNewCompletion = !user.completedLessons.includes(currentLessonIdx);
+        const earnedPoints = isNewCompletion ? lessonPoints : 0;
+        if (isNewCompletion) {
+            user.completedLessons.push(currentLessonIdx);
+            user.lessons++;
+            user.points += earnedPoints;
+            user.history.push({
+                date: new Date().toISOString(),
+                title: lessons[currentLessonIdx].title,
+                points: earnedPoints,
+                mistakes: lessonMistakes.slice()
+            });
+        }
+        if(user.lessons > 2) user.level = "Growing";
+        document.getElementById('prog-lessons').innerText = user.lessons;
+        document.getElementById('prog-points').innerText = user.points;
+        document.getElementById('completion-points').innerText = earnedPoints;
+        goTo('p-complete');
+    }
+
+    function renderProfile() {
+        updateProfileAvatars();
+        document.getElementById('profile-summary').textContent =
+            `${user.name} · ${user.level} level · ${user.lessons} completed lesson${user.lessons === 1 ? '' : 's'} · ${user.points} points`;
+        document.getElementById('growth-chart-caption').textContent =
+            user.history.length ? `${user.lessons} lesson${user.lessons === 1 ? '' : 's'} completed · ${user.points} points earned` : 'Complete a lesson to start tracking your growth.';
+        renderGrowthChart();
+        renderImprovementReport();
+        const history = document.getElementById('profile-history');
+        history.replaceChildren();
+        if (!user.history.length) {
+            const empty = document.createElement('p');
+            empty.textContent = 'Your completed lessons and dates will appear here.';
+            history.append(empty);
+            return;
+        }
+        user.history.slice().reverse().forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'phrase-card';
+            const title = document.createElement('strong');
+            title.textContent = item.title;
+            const detail = document.createElement('p');
+            detail.style.margin = '6px 0 0';
+            const date = new Date(item.date);
+            const dateText = Number.isNaN(date.getTime()) ? 'Date unavailable' : date.toLocaleDateString();
+            detail.textContent = `${dateText} · ${item.points} points`;
+            card.append(title, detail);
+            history.append(card);
+        });
+    }
+
+    function renderGrowthChart() {
+        const chart = document.getElementById('growth-chart');
+        chart.replaceChildren();
+        const svg = 'http://www.w3.org/2000/svg';
+        const add = (name, attrs, parent) => {
+            const element = document.createElementNS(svg, name);
+            Object.entries(attrs).forEach(([key, value]) => element.setAttribute(key, value));
+            parent.append(element);
+            return element;
+        };
+        [0, 1, 2, 3].forEach(index => {
+            const y = 150 - index * 40;
+            add('line', { x1: 38, y1: y, x2: 348, y2: y, stroke: '#e5e7eb', 'stroke-width': 1 }, chart);
+        });
+        if (!user.history.length) {
+            const label = add('text', { x: 180, y: 92, 'text-anchor': 'middle' }, chart);
+            label.textContent = 'Your progress will appear here';
+            return;
+        }
+        let total = 0;
+        const points = user.history.map(item => {
+            total += item.points;
+            return { date: item.date, total };
+        });
+        const max = Math.max(total, 10);
+        const chartPoints = points.map((point, index) => {
+            const x = points.length === 1 ? 193 : 42 + (index / (points.length - 1)) * 300;
+            const y = 150 - (point.total / max) * 120;
+            return { ...point, x, y };
+        });
+        const polyline = add('polyline', {
+            points: chartPoints.map(point => `${point.x},${point.y}`).join(' '),
+            fill: 'none',
+            stroke: '#20497d',
+            'stroke-width': 3,
+            'stroke-linecap': 'round',
+            'stroke-linejoin': 'round'
+        }, chart);
+        polyline.setAttribute('aria-label', 'Cumulative points by lesson completion date');
+        chartPoints.forEach(point => {
+            add('circle', { cx: point.x, cy: point.y, r: 5, fill: '#b9d433', stroke: '#20497d', 'stroke-width': 2 }, chart);
+            const date = new Date(point.date);
+            const label = add('text', { x: point.x, y: 174, 'text-anchor': 'middle' }, chart);
+            label.textContent = Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+        });
+    }
+
+    function renderImprovementReport() {
+        const container = document.getElementById('improvement-report');
+        container.replaceChildren();
+        const mistakes = user.history.flatMap(item => item.mistakes);
+        if (!mistakes.length) {
+            const note = document.createElement('p');
+            note.textContent = user.history.length
+                ? 'Great work: no missed quiz questions were recorded. Keep practising to build confidence.'
+                : 'After your first quiz, this section will highlight topics to practise.';
+            container.append(note);
+            return;
+        }
+        const counts = new Map();
+        mistakes.forEach(question => counts.set(question, (counts.get(question) || 0) + 1));
+        Array.from(counts.entries())
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5)
+            .forEach(([question, count]) => {
+                const item = document.createElement('div');
+                item.className = 'improvement-item';
+                item.textContent = `${question} · missed ${count} time${count === 1 ? '' : 's'}`;
+                container.append(item);
+            });
+    }
+
+    function completeSpeakingPractice() {
+        speakingCompleted = true;
+        goTo('p-feedback');
+    }
+
+    function speakText(text) {
+        if ('speechSynthesis' in window) {
+            const msg = new SpeechSynthesisUtterance(text);
+            msg.rate = 0.9;
+            msg.volume = 1;
+            window.speechSynthesis.resume();
+            window.speechSynthesis.speak(msg);
+        }
+    }
+
+    function renderAccentButtons() {
+        const grid = document.getElementById('dictionary-accent-grid');
+        dictionaryAccents.forEach(accent => {
+            const option = document.createElement('div');
+            option.className = 'accent-option';
+
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'btn btn-secondary accent-button';
+            button.disabled = true;
+            button.dataset.locale = accent.locale;
+
+            const flag = document.createElement('span');
+            flag.className = 'accent-flag';
+            flag.setAttribute('aria-hidden', 'true');
+            flag.textContent = accent.flag;
+            button.append(flag, document.createTextNode(accent.label));
+            button.addEventListener('click', () => speakDictionaryAccent(accent));
+
+            const tooltip = document.createElement('span');
+            tooltip.className = 'voice-tooltip';
+            tooltip.setAttribute('role', 'tooltip');
+            option.append(button, tooltip);
+            grid.append(option);
+        });
+    }
+
+    function getAccentVoice(accent, voices) {
+        const locale = accent.locale.toLowerCase();
+        const exactVoice = voices.find(voice => (voice.lang || '').toLowerCase() === locale);
+        if (exactVoice) return exactVoice;
+
+        if (locale.startsWith('en-')) {
+            const preferredFallbacks = locale === 'en-gb' ? ['en-us'] : ['en-gb'];
+            for (const fallbackLocale of preferredFallbacks) {
+                const fallbackVoice = voices.find(voice => (voice.lang || '').toLowerCase() === fallbackLocale);
+                if (fallbackVoice) return fallbackVoice;
+            }
+            return voices.find(voice => (voice.lang || '').toLowerCase().startsWith('en-'))
+                || voices.find(voice => (voice.lang || '').toLowerCase() === 'en')
+                || null;
+        }
+
+        const language = locale.split('-')[0];
+        return voices.find(voice => (voice.lang || '').toLowerCase().startsWith(`${language}-`))
+            || voices.find(voice => (voice.lang || '').toLowerCase() === language)
+            || null;
+    }
+
+    function updateAccentAvailability() {
+        const speechSupported = 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined';
+        const voices = speechSupported ? window.speechSynthesis.getVoices() : [];
+        let availableVoiceCount = 0;
+
+        document.querySelectorAll('.accent-button').forEach(button => {
+            const accent = dictionaryAccents.find(item => item.locale === button.dataset.locale);
+            const voice = accent ? getAccentVoice(accent, voices) : null;
+            if (voice) availableVoiceCount++;
+
+            button.disabled = !currentDictionaryWord || !voice || !speechSupported;
+            const tooltip = button.parentElement.querySelector('.voice-tooltip');
+            if (!speechSupported) {
+                tooltip.textContent = 'Speech playback is not supported in this browser.';
+                button.title = tooltip.textContent;
+            } else if (!voice) {
+                tooltip.textContent = 'Voice not installed on this device';
+                button.title = tooltip.textContent;
+            } else {
+                tooltip.textContent = '';
+                button.title = `Speak using ${voice.name || voice.lang}`;
+                button.setAttribute('aria-label', `${accent.label}, using ${voice.lang} voice`);
+            }
+        });
+
+        const playAllButton = document.getElementById('dictionary-play-all');
+        playAllButton.disabled = !currentDictionaryWord || availableVoiceCount === 0;
+        if (!speechSupported && currentDictionaryWord) {
+            document.getElementById('dictionary-accent-status').textContent =
+                'Speech playback is not supported in this browser.';
+        } else if (currentDictionaryWord && availableVoiceCount === 0) {
+            document.getElementById('dictionary-accent-status').textContent =
+                'No compatible voices are installed on this device.';
+        } else {
+            document.getElementById('dictionary-accent-status').textContent = '';
+        }
+    }
+
+    function stopDictionaryPlayback() {
+        dictionarySequenceId++;
+        isPlayingAllAccents = false;
+        if (dictionarySequenceTimer !== null) {
+            clearTimeout(dictionarySequenceTimer);
+            dictionarySequenceTimer = null;
+        }
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        if (dictionaryAudio) {
+            dictionaryAudio.pause();
+            dictionaryAudio = null;
+        }
+
+        const playAllButton = document.getElementById('dictionary-play-all');
+        if (playAllButton) playAllButton.textContent = 'Play All Accents';
+    }
+
+    function speakDictionaryAccent(accent) {
+        const voices = window.speechSynthesis.getVoices();
+        const voice = getAccentVoice(accent, voices);
+        if (!currentDictionaryWord || !voice) {
+            updateAccentAvailability();
+            return;
+        }
+
+        stopDictionaryPlayback();
+        const sequenceId = dictionarySequenceId;
+        const utterance = new SpeechSynthesisUtterance(currentDictionaryWord);
+        utterance.voice = voice;
+        utterance.lang = voice.lang || accent.locale;
+        utterance.volume = 1;
+        utterance.rate = 0.9;
+        utterance.onend = () => {
+            if (sequenceId === dictionarySequenceId) {
+                document.getElementById('dictionary-accent-status').textContent =
+                    `Finished playing ${accent.label}.`;
+            }
+        };
+        utterance.onerror = event => {
+            if (sequenceId === dictionarySequenceId && event.error !== 'canceled' && event.error !== 'interrupted') {
+                document.getElementById('dictionary-accent-status').textContent =
+                    `Could not play ${accent.label}: ${event.error}.`;
+            }
+        };
+        document.getElementById('dictionary-accent-status').textContent =
+            `Speaking with ${voice.lang} voice${voice.name ? ` (${voice.name})` : ''}.`;
+        window.speechSynthesis.resume();
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function playAllDictionaryAccents() {
+        if (!currentDictionaryWord) return;
+
+        const voices = window.speechSynthesis.getVoices();
+        const availableAccents = dictionaryAccents
+            .map(accent => ({ accent, voice: getAccentVoice(accent, voices) }))
+            .filter(item => item.voice);
+        if (availableAccents.length === 0) {
+            updateAccentAvailability();
+            return;
+        }
+
+        stopDictionaryPlayback();
+        isPlayingAllAccents = true;
+        const sequenceId = dictionarySequenceId;
+        const word = currentDictionaryWord;
+        const playAllButton = document.getElementById('dictionary-play-all');
+        playAllButton.textContent = 'Stop Accent Playback';
+        let index = 0;
+
+        const speakNext = () => {
+            if (sequenceId !== dictionarySequenceId) return;
+            if (index >= availableAccents.length) {
+                isPlayingAllAccents = false;
+                playAllButton.textContent = 'Play All Accents';
+                document.getElementById('dictionary-accent-status').textContent = 'Finished playing all available accents.';
+                return;
+            }
+
+            const { accent, voice } = availableAccents[index++];
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.voice = voice;
+            utterance.lang = voice.lang || accent.locale;
+            utterance.volume = 1;
+            utterance.rate = 0.9;
+            document.getElementById('dictionary-accent-status').textContent =
+                `Playing ${accent.label} (${voice.lang})...`;
+            utterance.onend = () => {
+                if (sequenceId !== dictionarySequenceId) return;
+                dictionarySequenceTimer = setTimeout(speakNext, 1500);
+            };
+            utterance.onerror = event => {
+                if (sequenceId !== dictionarySequenceId || event.error === 'canceled' || event.error === 'interrupted') return;
+                document.getElementById('dictionary-accent-status').textContent =
+                    `Could not play ${accent.label}: ${event.error}.`;
+                dictionarySequenceTimer = setTimeout(speakNext, 1500);
+            };
+            window.speechSynthesis.resume();
+            window.speechSynthesis.speak(utterance);
+        };
+
+        speakNext();
+    }
+
+    function playOriginalDictionaryAudio() {
+        const button = document.getElementById('dictionary-original-audio');
+        const audioUrl = button.dataset.audioUrl;
+        if (!audioUrl) return;
+
+        stopDictionaryPlayback();
+        const audio = new Audio(audioUrl);
+        audio.volume = 1;
+        dictionaryAudio = audio;
+        audio.addEventListener('error', () => {
+            if (dictionaryAudio === audio) {
+                document.getElementById('dictionary-status').textContent =
+                    'The original pronunciation audio could not be played.';
+                dictionaryAudio = null;
+            }
+        });
+        const playRequest = audio.play();
+        if (playRequest && typeof playRequest.catch === 'function') {
+            playRequest.catch(error => {
+                if (dictionaryAudio === audio && error.name !== 'AbortError') {
+                    document.getElementById('dictionary-status').textContent =
+                        `The original pronunciation audio could not be played: ${error.message}`;
+                    dictionaryAudio = null;
+                }
+            });
+        }
+    }
+
+    async function searchDictionary() {
+        const input = document.getElementById('dictionary-word-input');
+        const status = document.getElementById('dictionary-status');
+        const results = document.getElementById('dictionary-results');
+        const word = input.value.trim();
+        if (!word) {
+            status.textContent = 'Enter a word to search.';
+            input.focus();
+            return;
+        }
+
+        stopDictionaryPlayback();
+        if (dictionaryRequestController) dictionaryRequestController.abort();
+        dictionaryRequestController = new AbortController();
+        const requestController = dictionaryRequestController;
+        currentDictionaryWord = '';
+        results.hidden = true;
+        document.getElementById('dictionary-original-audio').hidden = true;
+        document.getElementById('dictionary-original-audio').dataset.audioUrl = '';
+        document.getElementById('dictionary-accent-status').textContent = '';
+        updateAccentAvailability();
+        status.textContent = `Searching for "${word}"...`;
+
+        try {
+            const response = await fetch(
+                `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`,
+                { signal: requestController.signal }
+            );
+            if (response.status === 404) {
+                status.textContent = `No definition found for "${word}". Check the spelling and try again.`;
+                return;
+            }
+            if (!response.ok) {
+                throw new Error(`The dictionary service returned error ${response.status}. Please try again.`);
+            }
+
+            let entries;
+            try {
+                entries = await response.json();
+            } catch {
+                throw new Error('The dictionary service returned invalid data.');
+            }
+            if (!Array.isArray(entries) || entries.length === 0 || !entries[0]) {
+                throw new Error('The dictionary service returned no usable entry.');
+            }
+
+            const entry = entries[0];
+            const phonetics = entries.flatMap(item => Array.isArray(item.phonetics) ? item.phonetics : []);
+            const phonetic = entries.map(item => item.phonetic).find(Boolean)
+                || (phonetics.find(item => item && item.text) || {}).text;
+            const meaningGroups = new Map();
+            entries.forEach(dictionaryEntry => {
+                (Array.isArray(dictionaryEntry.meanings) ? dictionaryEntry.meanings : []).forEach(meaning => {
+                    if (!meaning || !Array.isArray(meaning.definitions)) return;
+                    const partOfSpeech = meaning.partOfSpeech || 'Meaning';
+                    if (!meaningGroups.has(partOfSpeech)) meaningGroups.set(partOfSpeech, []);
+                    const definitions = meaningGroups.get(partOfSpeech);
+                    meaning.definitions.forEach(item => {
+                        if (!item || !item.definition || definitions.some(existing => existing.definition === item.definition)) return;
+                        definitions.push(item);
+                    });
+                });
+            });
+
+            currentDictionaryWord = entry.word || word;
+            document.getElementById('dictionary-result-word').textContent = currentDictionaryWord;
+            document.getElementById('dictionary-result-phonetic').textContent =
+                phonetic ? `IPA: ${phonetic}` : 'IPA pronunciation not provided.';
+            const meaningsContainer = document.getElementById('dictionary-result-meanings');
+            meaningsContainer.replaceChildren();
+            meaningGroups.forEach((definitions, partOfSpeech) => {
+                if (!definitions.length) return;
+                const section = document.createElement('section');
+                section.className = 'dictionary-meaning';
+                const heading = document.createElement('h4');
+                heading.textContent = partOfSpeech;
+                const list = document.createElement('ol');
+                definitions.forEach(item => {
+                    const definition = document.createElement('li');
+                    definition.append(document.createTextNode(item.definition));
+                    if (item.example) {
+                        const example = document.createElement('span');
+                        example.className = 'dictionary-example';
+                        example.textContent = `Example: “${item.example}”`;
+                        definition.append(example);
+                    }
+                    list.append(definition);
+                });
+                section.append(heading, list);
+                meaningsContainer.append(section);
+            });
+            if (!meaningsContainer.childElementCount) {
+                const unavailable = document.createElement('p');
+                unavailable.textContent = 'No definitions were provided for this entry.';
+                meaningsContainer.append(unavailable);
+            }
+
+            const audioItem = phonetics.find(item => item && item.audio);
+            if (audioItem) {
+                const audioUrl = audioItem.audio.startsWith('//')
+                    ? `https:${audioItem.audio}`
+                    : new URL(audioItem.audio, 'https://api.dictionaryapi.dev').href;
+                const audioButton = document.getElementById('dictionary-original-audio');
+                audioButton.dataset.audioUrl = audioUrl;
+                audioButton.hidden = false;
+            }
+
+            results.hidden = false;
+            status.textContent = `Definition found for "${currentDictionaryWord}".`;
+            updateAccentAvailability();
+        } catch (error) {
+            if (error.name === 'AbortError') return;
+            status.textContent = `Dictionary lookup failed: ${error.message || 'An unexpected error occurred.'}`;
+        } finally {
+            if (dictionaryRequestController === requestController) dictionaryRequestController = null;
+        }
+    }
+
+    document.getElementById('dictionary-search-form').addEventListener('submit', event => {
+        event.preventDefault();
+        searchDictionary();
+    });
+    document.getElementById('dictionary-original-audio').addEventListener('click', playOriginalDictionaryAudio);
+    document.getElementById('dictionary-play-all').addEventListener('click', () => {
+        if (isPlayingAllAccents) {
+            stopDictionaryPlayback();
+            document.getElementById('dictionary-accent-status').textContent = 'Accent playback stopped.';
+        } else {
+            playAllDictionaryAccents();
+        }
+    });
+    renderAccentButtons();
+    updateAccentAvailability();
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.addEventListener('voiceschanged', updateAccentAvailability);
+    }
+    document.getElementById('display-name').textContent = user.name;
+    document.getElementById('stat-lessons').textContent = user.lessons;
+    document.getElementById('stat-level').textContent = user.level;
+    updateProfileAvatars();
+    updateGreeting();
+</script>
+</body>
+</html> 
