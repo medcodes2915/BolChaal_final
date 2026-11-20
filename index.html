@@ -271,6 +271,35 @@
         .profile-avatar-image[hidden] { display: none; }
         .growth-chart { width: 100%; height: auto; overflow: visible; }
         .growth-chart text { fill: var(--secondary-text); font: 10px var(--font-main); }
+        .grammar-entry { background: linear-gradient(145deg, rgba(185, 212, 51, 0.16), rgba(255,255,255,0.92)); }
+        .grammar-topic-option {
+            display: block;
+            width: 100%;
+            margin-bottom: 14px;
+            padding: 20px;
+            border: 1px solid rgba(32, 73, 125, 0.12);
+            border-radius: var(--radius-md);
+            background: white;
+            color: var(--primary-text);
+            text-align: left;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            font-family: var(--font-main);
+        }
+        .grammar-topic-option strong, .grammar-topic-option span { display: block; }
+        .grammar-topic-option strong { margin-bottom: 6px; font-size: 15px; }
+        .grammar-topic-option span { color: var(--secondary-text); font-size: 13px; line-height: 1.5; }
+        .grammar-topic-option span:last-child { margin-top: 8px; color: var(--accent-start); font-weight: 700; }
+        .grammar-topic-option:hover { border-color: var(--accent-start); transform: translateY(-2px); }
+        .grammar-topic-option:focus-visible, .grammar-answer-option:focus-visible { outline: 3px solid rgba(32, 73, 125, 0.35); outline-offset: 3px; }
+        .grammar-answer-option { display: block; width: 100%; font-family: var(--font-main); color: var(--primary-text); text-align: left; }
+        .grammar-progress-list { display: grid; gap: 14px; }
+        .grammar-progress-item { padding: 12px 14px; border-radius: var(--radius-md); background: rgba(255,255,255,0.88); }
+        .grammar-progress-heading { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 8px; font-size: 12px; font-weight: 600; }
+        .grammar-progress-heading span:last-child { color: var(--accent-start); white-space: nowrap; }
+        .grammar-progress-track { height: 12px; overflow: hidden; border-radius: 999px; background: rgba(32,73,125,0.1); }
+        .grammar-progress-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, #20497d, #b9d433); transition: width 0.35s ease; }
+        .quiz-result-score { margin: 24px 0; color: var(--accent-start); font-size: 52px; font-weight: 700; }
         .improvement-item { padding: 12px 14px; margin-bottom: 10px; border-radius: var(--radius-sm); background: rgba(32, 73, 125, 0.06); font-size: 13px; line-height: 1.5; }
         .phrase-modal {
             position: fixed;
@@ -737,6 +766,11 @@
             <p>Look up a word, hear its pronunciation, and explore different accents.</p>
             <button type="button" class="btn btn-primary dictionary-primary" onclick="goTo('p-dictionary')">Open Dictionary</button>
         </div>
+        <div class="glass-card dictionary-entry grammar-entry">
+            <h3>Grammar Quiz</h3>
+            <p>Practise six grammar topics with a quick, randomized 10-question challenge.</p>
+            <button type="button" class="btn btn-primary" onclick="goTo('p-grammar-topics')">Choose a Topic</button>
+        </div>
         <h3>Your Progress</h3>
         <div class="stat-grid">
             <div class="stat-box">
@@ -791,6 +825,33 @@
         <p class="step-status" aria-live="polite">Current lesson points: <span id="quiz-points">10</span></p>
         <div id="quiz-container"></div>
         <button id="continue-from-quiz" class="btn btn-primary" onclick="goTo('p-speaking')" disabled>Continue</button>
+    </div>
+
+    <div id="p-grammar-topics" class="page">
+        <button type="button" class="btn btn-secondary" onclick="goTo('p-home')">Back to Home</button>
+        <span class="tag">60-question bank</span>
+        <h2>Choose a Grammar Topic</h2>
+        <p>Answer each question correctly to move on. Your progress stays available while you use the app.</p>
+        <div id="grammar-topic-list"></div>
+    </div>
+
+    <div id="p-grammar-quiz" class="page">
+        <button type="button" class="btn btn-secondary" onclick="goTo('p-grammar-topics')">Exit Quiz</button>
+        <span class="tag" id="grammar-quiz-topic-title">Topic</span>
+        <h2 id="grammar-question-title">Question</h2>
+        <p id="grammar-question-progress" class="step-status" aria-live="polite"></p>
+        <div id="grammar-quiz-options"></div>
+        <p id="grammar-quiz-feedback" class="quiz-feedback" role="status" aria-live="polite"></p>
+        <button id="grammar-next-question" type="button" class="btn btn-primary" onclick="nextGrammarQuestion()" hidden>Next Question</button>
+    </div>
+
+    <div id="p-grammar-results" class="page" style="text-align: center; padding-top: 60px;">
+        <span class="tag" id="grammar-result-topic-title">Topic</span>
+        <h2>Quiz Complete!</h2>
+        <p class="quiz-result-score"><span id="grammar-result-correct">0</span>/10</p>
+        <p id="grammar-result-summary"></p>
+        <button type="button" class="btn btn-primary" onclick="goTo('p-grammar-topics')">Choose Another Topic</button>
+        <button type="button" class="btn btn-secondary" onclick="goTo('p-home')">Back Home</button>
     </div>
 
     <div id="p-speaking" class="page" style="text-align: center; padding-top: 40px;">
@@ -850,10 +911,15 @@
         <button type="button" class="btn btn-secondary" onclick="document.getElementById('profile-photo-input').click()">Choose profile photo</button>
         <input id="profile-photo-input" type="file" accept="image/*" hidden>
         <p id="profile-photo-status" role="status" aria-live="polite"></p>
-        <h3>Learning growth</h3>
+        <h3>Grammar topics</h3>
         <div class="glass-card">
-            <p id="growth-chart-caption">Your lesson points over time.</p>
-            <svg id="growth-chart" class="growth-chart" viewBox="0 0 360 190" role="img" aria-label="Learning progress chart"></svg>
+            <p id="grammar-chart-caption">Correctly answered questions in each grammar topic.</p>
+            <div id="grammar-topic-chart" class="grammar-progress-list"></div>
+        </div>
+        <h3>Video progress</h3>
+        <div class="glass-card">
+            <p id="video-progress-caption">Each point shows how much of a lesson video you have watched.</p>
+            <svg id="video-progress-chart" class="growth-chart" viewBox="0 0 360 190" role="img" aria-label="Video watch progress by lesson"></svg>
         </div>
         <h3>Area to improve</h3>
         <div id="improvement-report" class="glass-card"></div>
@@ -991,6 +1057,7 @@
     </div>
 </div>
 
+<script src="grammar-data.js"></script>
 <script>
     const lessons = [
         {
@@ -1534,14 +1601,10 @@ Thank you.`
         points: 0,
         completedLessons: [],
         avatar: "",
-        history: []
+        history: [],
+        videoProgress: {}
     };
-    const userStorageKey = 'bolchaal-user-progress';
-    try {
-        localStorage.removeItem(userStorageKey);
-    } catch (error) {
-        console.warn('Saved Bolchaal profile data could not be cleared.', error);
-    }
+    const userStorageKey = 'bolchaal_user_data';
     let currentLessonIdx = 0;
     let isAdmin = false;
     let parsedCaptions = [];
@@ -1556,6 +1619,8 @@ Thank you.`
     const quizCorrectPoints = 5;
     const quizWrongPenalty = 2;
     let speakingCompleted = false;
+    const grammarTopicSessions = new Map();
+    let activeGrammarTopicId = null;
     const dictionaryAccents = [
         { flag: '🇺🇸', label: 'US English', locale: 'en-US' },
         { flag: '🇬🇧', label: 'British English', locale: 'en-GB' },
@@ -1683,6 +1748,10 @@ Thank you.`
     function trackVideoProgress() {
         if (!lessonVideo.paused) {
             videoWatchedUntil = Math.max(videoWatchedUntil, lessonVideo.currentTime);
+            if (Number.isFinite(lessonVideo.duration) && lessonVideo.duration > 0) {
+                const progress = Math.min(100, Math.round(videoWatchedUntil / lessonVideo.duration * 100));
+                user.videoProgress[currentLessonIdx] = Math.max(user.videoProgress[currentLessonIdx] || 0, progress);
+            }
         }
     }
 
@@ -1697,6 +1766,7 @@ Thank you.`
     function completeVideoWatch() {
         if (Number.isFinite(lessonVideo.duration) && lessonVideo.currentTime >= lessonVideo.duration - 0.5) {
             videoCompleted = true;
+            user.videoProgress[currentLessonIdx] = 100;
             document.getElementById('continue-from-video').disabled = false;
             document.getElementById('video-status').textContent = "Video complete. Review optional phrases or go straight to the quiz.";
             openPhrasePrompt();
@@ -1853,6 +1923,155 @@ Thank you.`
         if (answer) completeQuizQuestion(questionIdx, true);
     }
 
+    function shuffleGrammarQuestions(questions) {
+        const shuffled = questions.map((question, bankIndex) => ({ ...question, bankIndex }));
+        for (let index = shuffled.length - 1; index > 0; index--) {
+            const swapIndex = Math.floor(Math.random() * (index + 1));
+            [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+        }
+        return shuffled;
+    }
+
+    function getGrammarTopicSession(topic) {
+        let session = grammarTopicSessions.get(topic.id);
+        if (!session) {
+            session = {
+                questions: shuffleGrammarQuestions(topic.questions),
+                currentIndex: 0,
+                solvedQuestionIndexes: new Set()
+            };
+            grammarTopicSessions.set(topic.id, session);
+        }
+        return session;
+    }
+
+    function getGrammarSolvedCount(topicId) {
+        const session = grammarTopicSessions.get(topicId);
+        return session ? session.solvedQuestionIndexes.size : 0;
+    }
+
+    function getTotalGrammarSolved() {
+        return grammarTopics.reduce((total, topic) => total + getGrammarSolvedCount(topic.id), 0);
+    }
+
+    function renderGrammarTopics() {
+        const container = document.getElementById('grammar-topic-list');
+        container.replaceChildren();
+        grammarTopics.forEach(topic => {
+            const solved = getGrammarSolvedCount(topic.id);
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'grammar-topic-option';
+            const title = document.createElement('strong');
+            title.textContent = topic.title;
+            const subtitle = document.createElement('span');
+            subtitle.textContent = topic.subtitle;
+            const status = document.createElement('span');
+            status.textContent = solved === topic.questions.length
+                ? `Complete · ${solved}/${topic.questions.length} solved`
+                : `${solved ? 'Continue' : 'Start quiz'} · ${solved}/${topic.questions.length} solved`;
+            button.append(title, subtitle, status);
+            button.addEventListener('click', () => startGrammarTopic(topic.id));
+            container.append(button);
+        });
+    }
+
+    function startGrammarTopic(topicId) {
+        const topic = grammarTopics.find(item => item.id === topicId);
+        if (!topic) throw new Error('The selected grammar topic could not be found.');
+        activeGrammarTopicId = topic.id;
+        const session = getGrammarTopicSession(topic);
+        if (session.currentIndex >= session.questions.length) {
+            finishGrammarTopic();
+            return;
+        }
+        renderGrammarQuestion();
+        goTo('p-grammar-quiz');
+    }
+
+    function renderGrammarQuestion() {
+        const topic = grammarTopics.find(item => item.id === activeGrammarTopicId);
+        if (!topic) throw new Error('The selected grammar topic could not be found.');
+        const session = getGrammarTopicSession(topic);
+        const question = session.questions[session.currentIndex];
+        if (!question) throw new Error('The next grammar question could not be found.');
+        const solved = session.solvedQuestionIndexes.has(question.bankIndex);
+        document.getElementById('grammar-quiz-topic-title').textContent = topic.title;
+        document.getElementById('grammar-question-title').textContent = question.question;
+        document.getElementById('grammar-question-progress').textContent =
+            `Question ${session.currentIndex + 1} of ${session.questions.length} · ${session.solvedQuestionIndexes.size} solved`;
+        const feedback = document.getElementById('grammar-quiz-feedback');
+        feedback.textContent = solved ? `Correct! ${question.explanation}` : '';
+        feedback.style.color = solved ? '#047857' : '';
+        const nextButton = document.getElementById('grammar-next-question');
+        nextButton.hidden = !solved;
+        nextButton.textContent = session.currentIndex === session.questions.length - 1 ? 'See Results' : 'Next Question';
+        const optionsContainer = document.getElementById('grammar-quiz-options');
+        optionsContainer.replaceChildren();
+        question.options.forEach((option, optionIndex) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'option-item grammar-answer-option';
+            button.textContent = option;
+            button.disabled = solved;
+            if (solved && optionIndex === question.answer) button.classList.add('correct');
+            button.addEventListener('click', () => answerGrammarQuestion(optionIndex, button));
+            optionsContainer.append(button);
+        });
+    }
+
+    function answerGrammarQuestion(optionIndex, selectedButton) {
+        const topic = grammarTopics.find(item => item.id === activeGrammarTopicId);
+        if (!topic) throw new Error('The selected grammar topic could not be found.');
+        const session = getGrammarTopicSession(topic);
+        const question = session.questions[session.currentIndex];
+        if (!question || session.solvedQuestionIndexes.has(question.bankIndex)) return;
+        const options = document.querySelectorAll('#grammar-quiz-options .grammar-answer-option');
+        options.forEach(button => button.classList.remove('selected', 'correct', 'incorrect'));
+        const feedback = document.getElementById('grammar-quiz-feedback');
+        selectedButton.classList.add('selected');
+        if (optionIndex !== question.answer) {
+            selectedButton.classList.add('incorrect');
+            feedback.textContent = 'Not quite. Choose the correct answer to continue.';
+            feedback.style.color = '#B91C1C';
+            return;
+        }
+        session.solvedQuestionIndexes.add(question.bankIndex);
+        options.forEach((button, index) => {
+            button.disabled = true;
+            if (index === question.answer) button.classList.add('correct');
+        });
+        document.getElementById('grammar-question-progress').textContent =
+            `Question ${session.currentIndex + 1} of ${session.questions.length} · ${session.solvedQuestionIndexes.size} solved`;
+        feedback.textContent = `Correct! ${question.explanation}`;
+        feedback.style.color = '#047857';
+        document.getElementById('grammar-next-question').hidden = false;
+    }
+
+    function nextGrammarQuestion() {
+        const topic = grammarTopics.find(item => item.id === activeGrammarTopicId);
+        if (!topic) throw new Error('The selected grammar topic could not be found.');
+        const session = getGrammarTopicSession(topic);
+        const question = session.questions[session.currentIndex];
+        if (!question || !session.solvedQuestionIndexes.has(question.bankIndex)) return;
+        session.currentIndex++;
+        if (session.currentIndex === session.questions.length) {
+            finishGrammarTopic();
+            return;
+        }
+        renderGrammarQuestion();
+    }
+
+    function finishGrammarTopic() {
+        const topic = grammarTopics.find(item => item.id === activeGrammarTopicId);
+        if (!topic) throw new Error('The selected grammar topic could not be found.');
+        document.getElementById('grammar-result-topic-title').textContent = topic.title;
+        document.getElementById('grammar-result-correct').textContent = getGrammarSolvedCount(topic.id);
+        document.getElementById('grammar-result-summary').textContent =
+            `You have solved all ${topic.questions.length} questions in this topic. Choose another topic or come back to practise again.`;
+        goTo('p-grammar-results');
+    }
+
     function goTo(pageId) {
         if (isAdmin && (pageId === 'p-transcript' || pageId === 'p-quiz')) {
             document.getElementById('main-video').pause();
@@ -1905,6 +2124,7 @@ Thank you.`
             document.getElementById('prog-points').innerText = user.points;
         }
         if (pageId === 'p-profile') renderProfile();
+        if (pageId === 'p-grammar-topics') renderGrammarTopics();
         document.getElementById('app').scrollTop = 0;
         window.scrollTo(0,0);
     }
@@ -2305,10 +2525,15 @@ Thank you.`
     function renderProfile() {
         updateProfileAvatars();
         document.getElementById('profile-summary').textContent =
-            `${user.name} · ${user.level} level · ${user.lessons} completed lesson${user.lessons === 1 ? '' : 's'} · ${user.points} points`;
-        document.getElementById('growth-chart-caption').textContent =
-            user.history.length ? `${user.lessons} lesson${user.lessons === 1 ? '' : 's'} completed · ${user.points} points earned` : 'Complete a lesson to start tracking your growth.';
-        renderGrowthChart();
+            `${user.name} · ${user.level} level · ${user.lessons} completed lesson${user.lessons === 1 ? '' : 's'} · ${getTotalGrammarSolved()} grammar questions solved`;
+        document.getElementById('grammar-chart-caption').textContent =
+            `${getTotalGrammarSolved()} grammar question${getTotalGrammarSolved() === 1 ? '' : 's'} solved across all topics.`;
+        const watchedVideos = Object.values(user.videoProgress).filter(progress => progress > 0).length;
+        document.getElementById('video-progress-caption').textContent = watchedVideos
+            ? `Watched progress for ${watchedVideos} of ${lessons.length} lesson videos. Points follow lesson order from left to right.`
+            : 'Watch a lesson video to start tracking your progress.';
+        renderGrammarProgressChart();
+        renderVideoProgressChart();
         renderImprovementReport();
         const history = document.getElementById('profile-history');
         history.replaceChildren();
@@ -2333,8 +2558,38 @@ Thank you.`
         });
     }
 
-    function renderGrowthChart() {
-        const chart = document.getElementById('growth-chart');
+    function renderGrammarProgressChart() {
+        const container = document.getElementById('grammar-topic-chart');
+        container.replaceChildren();
+        grammarTopics.forEach(topic => {
+            const solved = getGrammarSolvedCount(topic.id);
+            const item = document.createElement('div');
+            item.className = 'grammar-progress-item';
+            const heading = document.createElement('div');
+            heading.className = 'grammar-progress-heading';
+            const title = document.createElement('span');
+            title.textContent = topic.title;
+            const count = document.createElement('span');
+            count.textContent = `${solved}/${topic.questions.length}`;
+            heading.append(title, count);
+            const track = document.createElement('div');
+            track.className = 'grammar-progress-track';
+            track.setAttribute('role', 'progressbar');
+            track.setAttribute('aria-valuemin', '0');
+            track.setAttribute('aria-valuemax', String(topic.questions.length));
+            track.setAttribute('aria-valuenow', String(solved));
+            track.setAttribute('aria-label', `${topic.title}: ${solved} of ${topic.questions.length} questions solved`);
+            const fill = document.createElement('div');
+            fill.className = 'grammar-progress-fill';
+            fill.style.width = `${solved / topic.questions.length * 100}%`;
+            track.append(fill);
+            item.append(heading, track);
+            container.append(item);
+        });
+    }
+
+    function renderVideoProgressChart() {
+        const chart = document.getElementById('video-progress-chart');
         chart.replaceChildren();
         const svg = 'http://www.w3.org/2000/svg';
         const add = (name, attrs, parent) => {
@@ -2343,40 +2598,37 @@ Thank you.`
             parent.append(element);
             return element;
         };
-        [0, 1, 2, 3].forEach(index => {
-            const y = 150 - index * 40;
+        [0, 50, 100].forEach(progress => {
+            const y = 150 - progress * 1.2;
             add('line', { x1: 38, y1: y, x2: 348, y2: y, stroke: '#e5e7eb', 'stroke-width': 1 }, chart);
+            const label = add('text', { x: 30, y: y + 4, 'text-anchor': 'end' }, chart);
+            label.textContent = `${progress}%`;
         });
-        if (!user.history.length) {
+        const points = lessons.map((lesson, index) => ({
+            title: lesson.title,
+            progress: Math.max(0, Math.min(100, user.videoProgress[index] || 0))
+        }));
+        if (points.every(point => point.progress === 0)) {
             const label = add('text', { x: 180, y: 92, 'text-anchor': 'middle' }, chart);
-            label.textContent = 'Your progress will appear here';
-            return;
+            label.textContent = 'Watch a lesson to see your progress';
         }
-        let total = 0;
-        const points = user.history.map(item => {
-            total += item.points;
-            return { date: item.date, total };
-        });
-        const max = Math.max(total, 10);
         const chartPoints = points.map((point, index) => {
             const x = points.length === 1 ? 193 : 42 + (index / (points.length - 1)) * 300;
-            const y = 150 - (point.total / max) * 120;
+            const y = 150 - point.progress * 1.2;
             return { ...point, x, y };
         });
         const polyline = add('polyline', {
             points: chartPoints.map(point => `${point.x},${point.y}`).join(' '),
-            fill: 'none',
-            stroke: '#20497d',
-            'stroke-width': 3,
-            'stroke-linecap': 'round',
-            'stroke-linejoin': 'round'
+            fill: 'none', stroke: '#20497d', 'stroke-width': 3,
+            'stroke-linecap': 'round', 'stroke-linejoin': 'round'
         }, chart);
-        polyline.setAttribute('aria-label', 'Cumulative points by lesson completion date');
-        chartPoints.forEach(point => {
-            add('circle', { cx: point.x, cy: point.y, r: 5, fill: '#b9d433', stroke: '#20497d', 'stroke-width': 2 }, chart);
-            const date = new Date(point.date);
+        polyline.setAttribute('aria-label', 'Percent watched for each lesson video in lesson order');
+        chartPoints.forEach((point, index) => {
+            const circle = add('circle', { cx: point.x, cy: point.y, r: 5, fill: '#b9d433', stroke: '#20497d', 'stroke-width': 2 }, chart);
+            const title = add('title', {}, circle);
+            title.textContent = `${point.title}: ${point.progress}% watched`;
             const label = add('text', { x: point.x, y: 174, 'text-anchor': 'middle' }, chart);
-            label.textContent = Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+            label.textContent = String(index + 1);
         });
     }
 
@@ -2780,6 +3032,112 @@ Thank you.`
     document.getElementById('stat-level').textContent = user.level;
     updateProfileAvatars();
     updateGreeting();
+
+    function saveProgress() {
+        try {
+            localStorage.setItem(userStorageKey, JSON.stringify(user));
+        } catch (error) {
+            console.error('Bolchaal progress could not be saved.', error);
+        }
+    }
+
+    function clearSavedProgress() {
+        try {
+            localStorage.removeItem(userStorageKey);
+        } catch (error) {
+            console.error('Saved Bolchaal progress could not be cleared.', error);
+        }
+    }
+
+    function loadProgress() {
+        let savedData;
+        try {
+            savedData = localStorage.getItem(userStorageKey);
+        } catch (error) {
+            console.error('Saved Bolchaal progress could not be read.', error);
+            return false;
+        }
+        if (!savedData) return false;
+
+        try {
+            const saved = JSON.parse(savedData);
+            const validHistory = Array.isArray(saved.history) && saved.history.every(item =>
+                item && typeof item.title === 'string' && typeof item.date === 'string'
+                && Number.isFinite(item.points) && Array.isArray(item.mistakes)
+                && item.mistakes.every(mistake => typeof mistake === 'string')
+            );
+            if (!saved || typeof saved !== 'object' || Array.isArray(saved)
+                || typeof saved.name !== 'string' || typeof saved.level !== 'string'
+                || !Number.isFinite(saved.lessons) || !Number.isFinite(saved.points)
+                || !Array.isArray(saved.completedLessons) || !validHistory) {
+                throw new Error('Saved progress has an invalid format.');
+            }
+
+            const validLessonIds = new Set(lessons.map(lesson => lesson.id));
+            const completedLessons = saved.completedLessons.filter(id => validLessonIds.has(id));
+            const videoProgress = {};
+            lessons.forEach(lesson => {
+                const progress = saved.videoProgress && saved.videoProgress[lesson.id];
+                if (Number.isFinite(progress) && progress >= 0 && progress <= 100) {
+                    videoProgress[lesson.id] = progress;
+                }
+            });
+            user = {
+                ...user,
+                ...saved,
+                name: saved.name.trim() || 'Learner',
+                lessons: Math.max(0, Math.floor(saved.lessons)),
+                points: Math.max(0, saved.points),
+                completedLessons,
+                history: saved.history,
+                videoProgress,
+                avatar: typeof saved.avatar === 'string' ? saved.avatar : ''
+            };
+            document.getElementById('display-name').textContent = user.name;
+            updateGreeting();
+            goTo('p-home');
+            return true;
+        } catch (error) {
+            console.error('Saved Bolchaal progress is invalid and could not be loaded.', error);
+            return false;
+        }
+    }
+
+    const originalCompleteSetup = completeSetup;
+    completeSetup = function() {
+        originalCompleteSetup();
+        saveProgress();
+    };
+
+    const originalFinishLesson = finishLesson;
+    finishLesson = function() {
+        originalFinishLesson();
+        saveProgress();
+    };
+
+    const lastSavedVideoProgress = {};
+    lessonVideo.addEventListener('timeupdate', () => {
+        const progress = user.videoProgress[currentLessonIdx] || 0;
+        const lastSaved = lastSavedVideoProgress[currentLessonIdx] || 0;
+        if (progress === 100 || progress - lastSaved >= 5) {
+            saveProgress();
+            lastSavedVideoProgress[currentLessonIdx] = progress;
+        }
+    });
+    lessonVideo.addEventListener('pause', () => {
+        if (user.videoProgress[currentLessonIdx] > 0) {
+            saveProgress();
+            lastSavedVideoProgress[currentLessonIdx] = user.videoProgress[currentLessonIdx];
+        }
+    });
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) saveProgress();
+    });
+    window.addEventListener('beforeunload', saveProgress);
+    document.getElementById('admin-access-form').addEventListener('submit', () => {
+        if (adminPassword.value === '123456') clearSavedProgress();
+    }, true);
+    window.addEventListener('DOMContentLoaded', loadProgress);
 </script>
 </body>
 </html> 
