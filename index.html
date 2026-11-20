@@ -2701,23 +2701,10 @@ Thank you.`
 
     function getAccentVoice(accent, voices) {
         const locale = accent.locale.toLowerCase();
-        const exactVoice = voices.find(voice => (voice.lang || '').toLowerCase() === locale);
-        if (exactVoice) return exactVoice;
-
-        if (locale.startsWith('en-')) {
-            const preferredFallbacks = locale === 'en-gb' ? ['en-us'] : ['en-gb'];
-            for (const fallbackLocale of preferredFallbacks) {
-                const fallbackVoice = voices.find(voice => (voice.lang || '').toLowerCase() === fallbackLocale);
-                if (fallbackVoice) return fallbackVoice;
-            }
-            return voices.find(voice => (voice.lang || '').toLowerCase().startsWith('en-'))
-                || voices.find(voice => (voice.lang || '').toLowerCase() === 'en')
-                || null;
-        }
-
         const language = locale.split('-')[0];
-        return voices.find(voice => (voice.lang || '').toLowerCase().startsWith(`${language}-`))
-            || voices.find(voice => (voice.lang || '').toLowerCase() === language)
+        return voices.find(voice => (voice.lang || '').toLowerCase() === locale)
+            || voices.find(voice => (voice.lang || '').toLowerCase().split('-')[0] === language)
+            || voices[0]
             || null;
     }
 
@@ -2731,29 +2718,27 @@ Thank you.`
             const voice = accent ? getAccentVoice(accent, voices) : null;
             if (voice) availableVoiceCount++;
 
-            button.disabled = !currentDictionaryWord || !voice || !speechSupported;
+            button.disabled = !currentDictionaryWord || !speechSupported;
             const tooltip = button.parentElement.querySelector('.voice-tooltip');
             if (!speechSupported) {
                 tooltip.textContent = 'Speech playback is not supported in this browser.';
                 button.title = tooltip.textContent;
-            } else if (!voice) {
-                tooltip.textContent = 'Voice not installed on this device';
-                button.title = tooltip.textContent;
             } else {
                 tooltip.textContent = '';
-                button.title = `Speak using ${voice.name || voice.lang}`;
-                button.setAttribute('aria-label', `${accent.label}, using ${voice.lang} voice`);
+                button.title = voice
+                    ? `Speak using ${voice.name || voice.lang}`
+                    : `Speak using the device's default voice`;
+                button.setAttribute('aria-label', voice
+                    ? `${accent.label}, using ${voice.lang} voice`
+                    : `${accent.label}, using the device's default voice`);
             }
         });
 
         const playAllButton = document.getElementById('dictionary-play-all');
-        playAllButton.disabled = !currentDictionaryWord || availableVoiceCount === 0;
+        playAllButton.disabled = !currentDictionaryWord || !speechSupported;
         if (!speechSupported && currentDictionaryWord) {
             document.getElementById('dictionary-accent-status').textContent =
                 'Speech playback is not supported in this browser.';
-        } else if (currentDictionaryWord && availableVoiceCount === 0) {
-            document.getElementById('dictionary-accent-status').textContent =
-                'No compatible voices are installed on this device.';
         } else {
             document.getElementById('dictionary-accent-status').textContent = '';
         }
@@ -2779,7 +2764,7 @@ Thank you.`
     function speakDictionaryAccent(accent) {
         const voices = window.speechSynthesis.getVoices();
         const voice = getAccentVoice(accent, voices);
-        if (!currentDictionaryWord || !voice) {
+        if (!currentDictionaryWord) {
             updateAccentAvailability();
             return;
         }
@@ -2787,8 +2772,8 @@ Thank you.`
         stopDictionaryPlayback();
         const sequenceId = dictionarySequenceId;
         const utterance = new SpeechSynthesisUtterance(currentDictionaryWord);
-        utterance.voice = voice;
-        utterance.lang = voice.lang || accent.locale;
+        if (voice) utterance.voice = voice;
+        utterance.lang = voice ? voice.lang || accent.locale : accent.locale;
         utterance.volume = 1;
         utterance.rate = 0.9;
         utterance.onend = () => {
@@ -2804,7 +2789,9 @@ Thank you.`
             }
         };
         document.getElementById('dictionary-accent-status').textContent =
-            `Speaking with ${voice.lang} voice${voice.name ? ` (${voice.name})` : ''}.`;
+            voice
+                ? `Speaking with ${voice.lang} voice${voice.name ? ` (${voice.name})` : ''}.`
+                : 'Speaking with the device default voice.';
         window.speechSynthesis.resume();
         window.speechSynthesis.speak(utterance);
     }
@@ -2814,12 +2801,7 @@ Thank you.`
 
         const voices = window.speechSynthesis.getVoices();
         const availableAccents = dictionaryAccents
-            .map(accent => ({ accent, voice: getAccentVoice(accent, voices) }))
-            .filter(item => item.voice);
-        if (availableAccents.length === 0) {
-            updateAccentAvailability();
-            return;
-        }
+            .map(accent => ({ accent, voice: getAccentVoice(accent, voices) }));
 
         stopDictionaryPlayback();
         isPlayingAllAccents = true;
@@ -2840,12 +2822,14 @@ Thank you.`
 
             const { accent, voice } = availableAccents[index++];
             const utterance = new SpeechSynthesisUtterance(word);
-            utterance.voice = voice;
-            utterance.lang = voice.lang || accent.locale;
+            if (voice) utterance.voice = voice;
+            utterance.lang = voice ? voice.lang || accent.locale : accent.locale;
             utterance.volume = 1;
             utterance.rate = 0.9;
             document.getElementById('dictionary-accent-status').textContent =
-                `Playing ${accent.label} (${voice.lang})...`;
+                voice
+                    ? `Playing ${accent.label} (${voice.lang})...`
+                    : `Playing ${accent.label} with the device default voice...`;
             utterance.onend = () => {
                 if (sequenceId !== dictionarySequenceId) return;
                 dictionarySequenceTimer = setTimeout(speakNext, 1500);
